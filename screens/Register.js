@@ -1,10 +1,10 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, StyleSheet, Image, TextInput, Text, View,} from 'react-native';
-
+import DatePicker from 'react-native-datepicker';
 
 export default class Register extends React.Component{
-       
+
     state = {
       username: '', password: '', email: '', phone_number: ''
     }
@@ -13,7 +13,7 @@ export default class Register extends React.Component{
       this.setState({ [key]: val })
     }
     render(){
-
+      const current = new Date();
       return(
         <View style={styles.container}>
           <Image 
@@ -44,7 +44,7 @@ export default class Register extends React.Component{
             onChangeText={val => this.onChangeText('email', val)}
           />
           <TouchableOpacity>
-              <Text style={styles.get_started}>Register</Text>
+              <Text style={styles.register}>Register</Text>
           </TouchableOpacity>
         </View>
       )
@@ -53,15 +53,15 @@ export default class Register extends React.Component{
 
 const styles = StyleSheet.create({
   input: {
-    marginTop: 15,
-    width: 350,
-    height: 55,
+    marginTop: 10,
+    width: "85%",
+    height: 40,
     backgroundColor: '#42A5F5',
     margin: 10,
     padding: 8,
     color: 'white',
     borderRadius: 25,
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: '500',
   },
   container: {
@@ -74,12 +74,13 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   logo:{
-    width: 200,
-    height: 200,
+    width: 100,
+    height: 100,
     margin: 'auto',
-    marginTop: '25%'
+    marginTop: '40%',
+    marginBottom: '20%',
   },
-  get_started: {
+  register: {
     backgroundColor: '#3A59FF',
     color: 'white',
     width: "75%",
