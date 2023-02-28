@@ -24,25 +24,28 @@ export default function Register({navigation}){
   }
 
   return (
-    <View>
+    <View style={styles.container}>
         <TextInput
+          value={registerUsername}
           placeholder="Username"
           editable
           maxLength={20}
-          onChange={e => setRegisterUsername(e.target.value)}
+          onChangeText={(registerUsername) => setRegisterUsername(registerUsername)}
         />
         <TextInput
           placeholder="Password"
+          value={registerPassword}
           editable
           maxLength={20}
           secureTextEntry={true}
-          onChange={e => setRegisterPassword(e.target.value)}
+          onChangeText={(registerPassword) => setRegisterPassword(registerPassword)}
         />
         <TextInput
+          value={registerEmail}
           placeholder="Email"
           editable
-          maxLength={20}
-          onChange={e => setRegisterEmail(e.target.value)}
+          maxLength={50}
+          onChangeText={(registerEmail) => setRegisterEmail(registerEmail)}
         />
         <TouchableOpacity onPress={register}>
           <Text>Press Here</Text>
@@ -50,3 +53,13 @@ export default function Register({navigation}){
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'yellow',
+  }
+})
