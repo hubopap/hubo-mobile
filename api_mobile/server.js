@@ -33,19 +33,18 @@ app.listen(3001, () => {
     console.log("Server aberto na porta 3001")
 });
 
-app.post("/register", async (req, res) => {
-    const query_already_exists = await User.findOne({where: {username: req.body.username}});
-    if(query_already_exists != null) {
-        console.log("User already exists");
-    }else{
-        const user = await User.create({
-            username: req.body.username,
-            password: bcrypt.hashSync(req.body.password, 10),
-            email_user: req.body.email,
-        });
-        await user.save();
-        res.send("User was created");
-    }
+app.post("/register", (req, res) => {
+    User.findOne({where: {username: req.body.username}}, async (err, doc) =>{
+        if (err) throw err;
+        if (doc) res.send("User Already Exists");
+        if(!doc){
+            const user = User.create({
+                username: req.body.username,
+                password: bcrypt.hashSync(req.body.password, 10),
+                email_user: req.body.email,
+            });
+        }
+    })
 });
 
 app.post("/login", (req, res) => {
