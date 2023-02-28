@@ -17,18 +17,22 @@ export default function Groups({navigation}){
     return(
         <View style={styles.container}>
             <ScrollView style= {styles.ScrollView}>
-                    {loading ? (<Text>Loading...</Text>) : (
-                        data.map((post) => (
-                            <TouchableOpacity style={styles.grupo} key={post.id_grupo} onPress={() => {
-                                navigation.navigate("Group", {
-                                    grupo:post
-                                })
-                            }}>
-                                <Text style={styles.titulo}>{post.nome_grupo}</Text>
-                                <Text style={styles.desc}>{post.desc_grupo}</Text>
-                            </TouchableOpacity>
-                        ))
-                    )}                
+                    {
+                        loading ? (<Text>Loading...</Text>) : (
+                            data.map(
+                                (post) => (
+                                    <TouchableOpacity style={styles.grupo} key={post.id_grupo} onPress={() => {
+                                        navigation.navigate("Group", {
+                                            grupo:post
+                                        })
+                                    }}>
+                                        <Text style={styles.titulo}>{post.nome_grupo}</Text>
+                                        <Text style={styles.desc}>{post.desc_grupo}</Text>
+                                    </TouchableOpacity>
+                                )
+                            )
+                        )
+                    }                
             </ScrollView>
         </View>
     );

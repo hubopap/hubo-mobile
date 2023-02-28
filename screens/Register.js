@@ -2,53 +2,72 @@ import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, StyleSheet, Image, TextInput, Text, View,} from 'react-native';
 import DatePicker from 'react-native-datepicker';
+import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+
 
 export default class Register extends React.Component{
 
-    state = {
-      username: '', password: '', email: '', phone_number: ''
-    }
+  state = {
+    username: '', password: '', email: '', phone_number: ''
+  }
 
-    onChangeText = (key, val) => {
-      this.setState({ [key]: val })
-    }
-    render(){
-      const current = new Date();
-      return(
-        <View style={styles.container}>
-          <Image 
-            source={require('../assets/logo_hubo_square.png')}
-            style={styles.logo}
-            resizeMode="contain"
-          ></Image>
-          <TextInput
-            style={styles.input}
-            placeholder='Username'
-            autoCapitalize="none"
-            placeholderTextColor='white'
-            onChangeText={val => this.onChangeText('username', val)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder='Password'
-            secureTextEntry={true}
-            autoCapitalize="none"
-            placeholderTextColor='white'
-            onChangeText={val => this.onChangeText('password', val)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder='Email'
-            autoCapitalize="none"
-            placeholderTextColor='white'
-            onChangeText={val => this.onChangeText('email', val)}
-          />
-          <TouchableOpacity>
-              <Text style={styles.register}>Register</Text>
-          </TouchableOpacity>
-        </View>
-      )
-    }
+  onChangeText = (key, val) => {
+    this.setState({ [key]: val })
+  }
+
+  registerUser = () => {
+    axios({
+      method: "POST",
+      data: {
+        username: this.state.username,
+        password: this.state.password,
+        email_user: this.state.email
+      },
+      withCredentials: true,
+      url: "http://localhost:4000/register"
+    }).then((res) => console.log(res));
+  }
+
+  render(){
+    const current = new Date();
+    return(
+      <View style={styles.container}>
+        <Image 
+          source={require('../assets/logo_hubo_square.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        ></Image>
+        <TextInput
+          style={styles.input}
+          placeholder='Username'
+          autoCapitalize="none"
+          placeholderTextColor='white'
+          onChangeText={val => this.onChangeText('username', val)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder='Password'
+          secureTextEntry={true}
+          autoCapitalize="none"
+          placeholderTextColor='white'
+          onChangeText={val => this.onChangeText('password', val)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder='Email'
+          autoCapitalize="none"
+          placeholderTextColor='white'
+          onChangeText={val => this.onChangeText('email', val)}
+        />
+        <TouchableOpacity onPress={() => {
+          this.registerUser()
+        }}>
+          <Text style={styles.register}>Register</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
 }
 
 const styles = StyleSheet.create({
