@@ -27,10 +27,22 @@ app.use(cookieParser("secretcode"));
 
 //Start Server
 
-app.listen(4000, () => {
-    console.log("Server aberto na porta 4000")
+app.listen(3001, () => {
+    console.log("Server aberto na porta 3001")
 });
 
 app.post("/register", (req, res) => {
+    console.log(req.body)
+});
+
+app.post("/login", (req, res) => {
+    console.log(req.body)
+});
+
+app.get("/users", (req, res) => {
+    console.log(req.body)
+});
+
+app.get("/groups", (req, res) => {
     console.log(req.body)
 });
