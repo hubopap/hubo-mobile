@@ -25,6 +25,10 @@ app.use(session({
 }));
 
 app.use(cookieParser("secretcode"));
+app.use(passport.initialize());
+app.use(passport.session());
+require('./passportConfig')(passport);
+
 
 
 //Start Server
@@ -33,22 +37,33 @@ app.listen(3001, () => {
     console.log("Server aberto na porta 3001")
 });
 
-app.post("/register", (req, res) => {
-    User.findOne({where: {username: req.body.username}}, async (err, doc) =>{
-        if (err) throw err;
-        if (doc) res.send("User Already Exists");
-        if(!doc){
-            const user = User.create({
-                username: req.body.username,
-                password: bcrypt.hashSync(req.body.password, 10),
-                email_user: req.body.email,
-            });
-        }
-    })
+app.post("/register", async (req, res) => {
+    const query_already_exists = await User.findOne({where: {username: req.body.username}});
+    if(query_already_exists != null) {
+        console.log("User already exists");
+    }else{
+        const user = await User.create({
+            username: req.body.username,
+            password: bcrypt.hashSync(req.body.password, 10),
+            email_user: req.body.email,
+        });
+        await user.save();
+        res.send("User was Created");
+    }
 });
 
-app.post("/login", (req, res) => {
-    console.log(req.body)
+app.post("/login", (req, res, next) => {
+    passport.authenticate("local", (err, user, info) => {
+        if (err) throw err;
+        if(!user) res.send("User does not exist");
+        else{
+            req.logIn(user, err => {
+                if (err) throw err;
+                res.send("Successfully authenticated");
+                console.log(req.user);
+            })  
+        }
+    })(req, res, next);
 });
 
 app.get("/users", (req, res) => {
