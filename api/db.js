@@ -1,6 +1,6 @@
 const Sequelize =  require('sequelize');
 
-const sequelize = new Sequelize('hubo', 'admin', 'admin123', {
+const sequelize = new Sequelize('hubo', 'root', '', {
   host: 'localhost',
   dialect: 'mariadb',
   define: {
@@ -15,4 +15,7 @@ try {
     console.error('Não foi possível ligar à base de dados:', error);
 }
 
-module.exports = sequelize;
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
+module.exports = db;
