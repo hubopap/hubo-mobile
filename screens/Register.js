@@ -42,7 +42,7 @@ export default function Register({navigation}){
       method: "GET",
       withCredentials: true,
       url: "http://hubo.pt:3001/user"
-    }).then((res) => console.log(res.data));
+    }).then((res) => console.log(res));
   }
 
   return (
@@ -80,7 +80,6 @@ export default function Register({navigation}){
         <TouchableOpacity onPress={getUser}>
           <Text>getUser</Text>
         </TouchableOpacity>
-        <Text>ola {data.username}</Text>
     </View>
   )
 }

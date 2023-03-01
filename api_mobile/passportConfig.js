@@ -21,7 +21,7 @@ module.exports = function(passport) {
         })
     );
 
-    passport.serializeUser((user, cb) => {
+    passport.serializeUser(function (user, cb)  {
         cb(null, user.id)
     });
 
