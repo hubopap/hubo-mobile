@@ -9,6 +9,8 @@ export default function Register({navigation}){
   const [registerUsername, setRegisterUsername] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
+  const [data, setData] = useState(null);
+
 
   const register = () => {
     axios({
@@ -20,7 +22,7 @@ export default function Register({navigation}){
       },
       withCredentials: true,
       url: "http://hubo.pt:3001/register"
-    }).then((res) => console.log(res));
+    }).then((res) => setData(res.data));
   }
 
   const login = () => {
@@ -33,6 +35,14 @@ export default function Register({navigation}){
       withCredentials: true,
       url: "http://hubo.pt:3001/login"
     }).then((res) => console.log(res));
+  }
+
+  const getUser = () =>  {
+    axios({
+      method: "GET",
+      withCredentials: true,
+      url: "http://hubo.pt:3001/user"
+    }).then((res) => console.log(res.data));
   }
 
   return (
@@ -66,6 +76,11 @@ export default function Register({navigation}){
         <TouchableOpacity onPress={login}>
           <Text>Login</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity onPress={getUser}>
+          <Text>getUser</Text>
+        </TouchableOpacity>
+        <Text>ola {data.username}</Text>
     </View>
   )
 }

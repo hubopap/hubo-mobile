@@ -23,10 +23,15 @@ module.exports = function(passport) {
 
     passport.serializeUser((user, cb) => {
         cb(null, user.id)
-    })
-    passport.deserializeUser((id, cb) => {
-        User.findOne({_id: id}, (err, user) => {
-            cb(err, user);
-        })
-    })
+    });
+
+    passport.deserializeUser(function (id, done) {
+        User.findByPk(id).then(function (user) {
+            if (user) {
+                done(null, user.get());
+            } else {
+                done(user.errors, null);
+            }
+        });
+    });
 }
