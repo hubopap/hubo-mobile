@@ -16,3 +16,4 @@ const myDB = new Sequelize(
 );
 
 module.exports = myDB;
+

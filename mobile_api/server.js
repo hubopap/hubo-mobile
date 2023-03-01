@@ -51,29 +51,53 @@ app.get("/login", (req, res) => {
     }
 });
 
+app.post("/register", async (req, res)=>{
+    const username = req.body.username;
+    const password = req.body.password;
+    const email = req.body.email;
+
+    const findUser = await User.findOne({where: {username: username}}, (err, result) => {
+
+    }); 
+        if(findUser===null) {
+            bcrypt.hash(password, 10, async (err, hash) => {
+                if(err) console.log(err);
+                try{
+                    const user = await User.create({
+                        username: req.body.username,
+                        password: hash,
+                        email_user: req.body.email,
+                    });
+                    res.send({message: "User criado com sucesso"});
+                }catch(err){
+                    if(err) {
+                        console.log(err);
+                    }
+                }
+            });
+        }
+})
+
 app.get("/", (req, res) => {
-    res.send("ola 123");
+    res.json({message: "ola 123"});
 });
 
 app.post("/login", async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    console.log(req);
-    const findUser = await User.findOne({where: {username: username}}, (err, result) => {
-        if(findUser===null) {
-            res.send({message: "User does not exist!"});
-        }else if(findUser){
-            bcrypt.compare(password, findUser.password, (err, res) => {
-                if(err){
-                    res.send(err);
-                } else if(res) {
-                    req.session.user = result;
-                    res.send(result);
-                }else{
-                    res.send({message: "Wrong Username or Password"});
-                }
-            })
+    const findUser = await User.findOne({where: {username: username}});
+    if(findUser===null) {
+        console.log("null");
+        res.send({message: "User does not exist!"});
+    }else if(findUser){
+        result = findUser;
+        console.log(result);
+        const compare = await bcrypt.compare(password, findUser.password);
+        if(compare == true){
+            req.session.user = result;
+            console.log(req.session.user);
+            res.send(result);
         }
-    });
+    }
 })
