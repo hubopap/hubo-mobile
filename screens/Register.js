@@ -23,6 +23,18 @@ export default function Register({navigation}){
     }).then((res) => console.log(res));
   }
 
+  const login = () => {
+    axios({
+      method: "post",
+      data: {
+        username: registerUsername,
+        password: registerPassword
+      },
+      withCredentials: true,
+      url: "http://hubo.pt:3001/login"
+    }).then((res) => console.log(res));
+  }
+
   return (
     <View style={styles.container}>
         <TextInput
@@ -48,7 +60,11 @@ export default function Register({navigation}){
           onChangeText={(registerEmail) => setRegisterEmail(registerEmail)}
         />
         <TouchableOpacity onPress={register}>
-          <Text>Press Here</Text>
+          <Text>Register</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={login}>
+          <Text>Login</Text>
         </TouchableOpacity>
     </View>
   )
