@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, StyleSheet, Image, TextInput, Text, View,} from 'react-native';
-import DatePicker from 'react-native-datepicker';
 import axios from 'axios';
 
 export default function Register({navigation}){
