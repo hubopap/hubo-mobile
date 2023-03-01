@@ -57,7 +57,7 @@ app.post("/login", (req, res, next) => {
         if (err) throw err;
         if(!user) res.send("User does not exist");
         else{
-            req.logIn(user, (err) => {
+            req.logIn(user, err => {
                 if (err) throw err;
                 res.send("Successfully authenticated");
                 console.log(req.user);
