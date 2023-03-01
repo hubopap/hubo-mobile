@@ -3,15 +3,15 @@ const SessionStore = require("express-session-sequelize")(expressSession.Store);
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const bcrypt = require("bcrypt");
+import myDB from 'db';
+import User from './models/user';
+import Grupo from './models/grupo';
 
 
 
-const Sequelize = require("sequelize");
 const { urlencoded } = require("body-parser");
-const myDB = new Sequelize("teste", "root", "", {
-    host: 'localhost',
-    dialect: 'mysql'
-});
+
 
 const sequelizeSessionStore = new SessionStore({
     db: myDB
@@ -39,9 +39,18 @@ app.use(cors({
 }));
 
 
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-
+    const findUser = await User.findOne({where: {username: username}});
+    if(findUser===null) {
+        res.send({message: "User does not exist!"});
+    }else if(findUser){
+        bcrypt.compare(password, findUser.password, (err, res) => {
+            if(res) {
+                console.log(res);
+            }
+        })
+    }
 })
