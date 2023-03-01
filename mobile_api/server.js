@@ -4,11 +4,12 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
-import myDB from 'db';
-import User from './models/user';
-import Grupo from './models/grupo';
+const myDB = require("./db");
+const User = require('./models/user');
+const Grupo = require('./models/grupo');
 
-
+User.sync({force:true});
+Grupo.sync({force:true});
 
 const { urlencoded } = require("body-parser");
 
