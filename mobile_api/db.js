@@ -3,8 +3,8 @@ const Sequelize = require("sequelize");
 
 const myDB = new Sequelize(
     "teste", 
-    "root", 
-    "", 
+    "admin", 
+    "admin123", 
     {
         dialect: 'mariadb',
         define: {
