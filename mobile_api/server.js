@@ -39,19 +39,30 @@ app.use(cors({
     credentials: true
 }));
 
+app.get("/login", (req, res) => {
+    if(req.session.user){
+        res.send({loggedIn: true, user: req.session.user})
+    } else {
+        res.send({LoggedIn: false});
+    }
+})
 
 app.post("/login", async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    const findUser = await User.findOne({where: {username: username}});
-    if(findUser===null) {
-        res.send({message: "User does not exist!"});
-    }else if(findUser){
-        bcrypt.compare(password, findUser.password, (err, res) => {
-            if(res) {
-                console.log(res);
-            }
-        })
-    }
+    const findUser = await User.findOne({where: {username: username}}, (err, result) => {
+        if(findUser===null) {
+            res.send({message: "User does not exist!"});
+        }else if(findUser){
+            bcrypt.compare(password, findUser.password, (err, res) => {
+                if(res) {
+                    req.session.user = result;
+                    res.send(result);
+                }else{
+                    res.send({message: "Wrong Username or Password"});
+                }
+            })
+        }
+    });
 })

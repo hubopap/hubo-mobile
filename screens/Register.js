@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, StyleSheet, Image, TextInput, Text, View,} from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 
+axios.defaults.withCredentials = true;
 
 export default class Register extends React.Component{
 
     state = {
       username: '', password: '', email: ''
     }
+
 
   onChangeText = (key, val) => {
     this.setState({ [key]: val })
@@ -25,12 +27,22 @@ export default class Register extends React.Component{
         email: this.state.email
       }
     }).then((res) => {
-      alert(res.status);
+      if(res.data.message){
+        alert(res.data.message);
+      }else{
+        alert(res.data[0].username);
+      }
     });
   }
 
   render(){
     const current = new Date();
+
+    useEffect(() => {
+      axios.get("http://hubo.pt:3001/login").then((res) => {
+        console.log(res);
+      });
+    })
     return(
       <View style={styles.container}>
         <Image 
