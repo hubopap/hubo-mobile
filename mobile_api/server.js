@@ -52,8 +52,8 @@ app.get("/login", (req, res) => {
 })
 
 app.post("/login", async (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+    const username = req.body.data.username;
+    const password = req.body.data.password;
 
     
     const findUser = await User.findOne({where: {username: username}}, (err, result) => {
