@@ -9,11 +9,24 @@ import { useNavigation } from '@react-navigation/native';
 export default class Register extends React.Component{
 
     state = {
-      username: '', password: '', email: '', phone_number: ''
+      username: '', password: '', email: ''
     }
 
   onChangeText = (key, val) => {
     this.setState({ [key]: val })
+  }
+
+  registerUser() {
+    axios.post("http://hubo.pt:3001/register", {
+      method: "post",
+      data: {
+        username: this.state.username,
+        password: this.state.password,
+        email: this.state.email
+      }
+    }).then((res) => {
+      alert(res.status);
+    });
   }
 
   render(){
@@ -47,7 +60,7 @@ export default class Register extends React.Component{
           placeholderTextColor='white'
           onChangeText={val => this.onChangeText('email', val)}
         />
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() =>  {this.registerUser()}}>
             <Text style={styles.register}>Register</Text>
         </TouchableOpacity>
       </View>
@@ -59,7 +72,7 @@ export default class Register extends React.Component{
 const styles = StyleSheet.create({
   input: {
     marginTop: 10,
-    width: "85%",
+    width: "75%",
     height: 40,
     backgroundColor: '#42A5F5',
     margin: 10,
