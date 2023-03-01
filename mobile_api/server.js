@@ -61,7 +61,9 @@ app.post("/login", async (req, res) => {
             res.send({message: "User does not exist!"});
         }else if(findUser){
             bcrypt.compare(password, findUser.password, (err, res) => {
-                if(res) {
+                if(err){
+                    res.send(err);
+                } else if(res) {
                     req.session.user = result;
                     res.send(result);
                 }else{
