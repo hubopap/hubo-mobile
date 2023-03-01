@@ -1,7 +1,6 @@
 {
   "expo": {
     "name": "app_hubo",
-    "entryPoint": "./App.js",
     "slug": "app_hubo",
     "version": "1.0.0",
     "orientation": "portrait",
