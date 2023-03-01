@@ -23,7 +23,7 @@ app = express();
 app.listen(3001, () => {
     console.log('api iniciada em http://localhost:3001');
 });
-
+app.use(express.json());
 app.use(cookieParser());
 app.use(expressSession({
     key: "id_user",
@@ -59,7 +59,7 @@ app.post("/login", async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    console.log(username, password);
+    console.log(req);
     const findUser = await User.findOne({where: {username: username}}, (err, result) => {
         if(findUser===null) {
             res.send({message: "User does not exist!"});
