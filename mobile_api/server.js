@@ -49,7 +49,11 @@ app.get("/login", (req, res) => {
     } else {
         res.send({LoggedIn: false});
     }
-})
+});
+
+app.get("/", (req, res) => {
+    res.send("ola 123");
+});
 
 app.post("/login", async (req, res) => {
     const username = req.body.username;
