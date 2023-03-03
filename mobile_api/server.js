@@ -12,6 +12,7 @@ User.sync({force:true});
 Grupo.sync({force:true});
 
 const { urlencoded } = require("body-parser");
+const { serializeUser } = require("passport");
 
 
 const sequelizeSessionStore = new SessionStore({
@@ -29,10 +30,10 @@ app.use(expressSession({
     key: "id_user",
     secret: "secredomaissecretodomundo",
     store: sequelizeSessionStore,
-    resave: false,
+    resave: true,
     saveUninitialized: false,
     cookie: {
-        expires: 60*60*24
+        expires: 259200000
     }
 }));
 
@@ -96,8 +97,18 @@ app.post("/login", async (req, res) => {
         const compare = await bcrypt.compare(password, findUser.password);
         if(compare == true){
             req.session.user = result;
-            console.log(req.session.user);
+            console.log(req.session.user)
             res.send(result);
+        } else {
+            res.send({message:"Palavra-passe incorreta"});
         }
     }
-})
+});
+
+app.post("/userdata", (req, res) => {
+    if(req.session.user){
+        res.send({loggedIn: true, user: req.session.user})
+    } else {
+        res.send({LoggedIn: false});
+    }
+});

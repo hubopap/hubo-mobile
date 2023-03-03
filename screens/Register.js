@@ -29,8 +29,6 @@ export default class Register extends React.Component{
     }).then((res) => {
       if(res.data.message){
         alert(res.data.message);
-      }else{
-        alert(res.data[0].username);
       }
     });
   }
