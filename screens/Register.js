@@ -19,7 +19,7 @@ export default class Register extends React.Component{
   }
 
   registerUser() {
-    axios.post("http://hubo.pt:3001/register", {
+    axios.post("http://localhost:3001/register", {
       method: "post",
       data: {
         username: this.state.username,
@@ -34,13 +34,6 @@ export default class Register extends React.Component{
   }
 
   render(){
-    const current = new Date();
-
-    useEffect(() => {
-      axios.get("http://hubo.pt:3001/login").then((res) => {
-        console.log(res);
-      });
-    })
     return(
       <View style={styles.container}>
         <Image 
