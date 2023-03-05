@@ -92,13 +92,12 @@ app.post("/login", async (req, res) => {
         console.log("null");
         res.send({message: "User does not exist!"});
     }else if(findUser){
-        result = findUser;
-        console.log(result);
+        user = findUser;
+        console.log(user);
         const compare = await bcrypt.compare(password, findUser.password);
         if(compare == true){
-            req.session.user = result;
-            console.log(req.session.user)
-            res.send(result);
+            req.session.user = user;
+            res.send({message: "Login feito com sucesso",user});
         } else {
             res.send({message:"Palavra-passe incorreta"});
         }

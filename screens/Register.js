@@ -19,16 +19,15 @@ export default class Register extends React.Component{
   }
 
   registerUser() {
-    axios.post("http://localhost:3001/register", {
+    axios.post("http://hubo.pt:3001/register", {
       method: "post",
-      data: {
-        username: this.state.username,
-        password: this.state.password,
-        email: this.state.email
-      }
+      username: this.state.username,
+      password: this.state.password,
+      email: this.state.email
     }).then((res) => {
       if(res.data.message){
         alert(res.data.message);
+        this.props.navigation.navigate("Login");
       }
     });
   }

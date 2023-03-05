@@ -1,5 +1,6 @@
 import HomePage from "./screens/HomePage";
 import Register from "./screens/Register";
+import Login from "./screens/Login";
 import Groups from "./screens/Groups";
 import Group from "./screens/Group";
 import { NavigationContainer, NavigationRouteContext } from "@react-navigation/native";
@@ -17,8 +18,12 @@ export default function App(){
       />
       <Stack.Screen
         name="Register"
-        options={{headerShown: false}}
         component={Register}
+      />
+      <Stack.Screen
+        name="Login"
+        options={{headerShown: false}}
+        component={Login}
       />
       <Stack.Screen
         name="Groups"

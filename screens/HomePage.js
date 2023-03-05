@@ -1,6 +1,7 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, StyleSheet, Image, Text, View,} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function HomePage ({navigation}) {
     return(
