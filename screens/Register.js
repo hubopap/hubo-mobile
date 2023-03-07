@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, StyleSheet, Image, TextInput, Text, View,} from 'react-native';
-import DatePicker from 'react-native-datepicker';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 
@@ -25,8 +24,7 @@ export default class Register extends React.Component{
       password: this.state.password,
       email: this.state.email
     }).then((res) => {
-      if(res.data.message){
-        alert(res.data.message);
+      if(res.status == 201){
         this.props.navigation.navigate("Login");
       }
     });

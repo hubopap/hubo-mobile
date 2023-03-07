@@ -1,25 +1,52 @@
-import React from 'react';
+import  React, {useState, useEffect} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, StyleSheet, Image, Text, View,} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function HomePage ({navigation}) {
-    return(
-      <View style={styles.container}>
-        <Image 
-          source={require('../assets/logo_hubo_square.png')}
-          style={styles.logo}
-          resizeMode="contain"
-        ></Image>
-        <Text style={styles.text}>Work Smart, Work Hubo.</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-            <Text style={styles.get_started}>Get Started</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("Groups")}>
-            <Text style={styles.get_started}>Groups Debug</Text>
-          </TouchableOpacity>
-      </View>
-    )
+  const [tokenInfo, setTokenInfo] = useState(null);
+
+    const handleGetToken = async () => {
+      const dataToken = await AsyncStorage.getItem('token');
+      if (!dataToken) {
+        return null;
+      } else {
+        return dataToken;
+      }
+    };
+
+    useEffect(() => {
+      const getTokenInfo = async () => {
+        const info = await handleGetToken();
+        setTokenInfo(info);
+      };
+
+      getTokenInfo();
+    }, []);  
+    
+    if(!tokenInfo){
+      return(
+        <View style={styles.container}>
+          <Image 
+            source={require('../assets/logo_hubo_square.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          ></Image>
+          <Text style={styles.text}>Work Smart, Work Hubo.</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+              <Text style={styles.get_started}>Get Started</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("Groups")}>
+              <Text style={styles.get_started}>Groups Debug</Text>
+            </TouchableOpacity>
+        </View>
+      )
+    }else{
+      navigation.replace("Groups");
+    }
+
+    
 }
 
 const styles = StyleSheet.create({

@@ -1,3 +1,4 @@
+/*import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, {useState, useEffect} from "react";
 import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 
@@ -36,7 +37,61 @@ export default function Groups({navigation}){
             </ScrollView>
         </View>
     );
+
+    const handleGetToken = async()=>{
+        const dataToken = await AsyncStorage.getItem("token");
+        if(!dataToken){
+            const info = dataToken;
+            return info;
+        }else{
+            const info = "foda-se";
+            return info;
+        }
+    }
+
+    return(
+        <View style={styles.container}>
+            {handleGetToken}
+        </View>
+    )
+
 }
+*/
+
+import React, { useEffect, useState } from 'react';
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const Groups = () => {
+  const [tokenInfo, setTokenInfo] = useState(null);
+
+  const handleGetToken = async () => {
+    const dataToken = await AsyncStorage.getItem('token');
+    if (!dataToken) {
+      return null;
+    } else {
+      return dataToken;
+    }
+  };
+
+  useEffect(() => {
+    const getTokenInfo = async () => {
+      const info = await handleGetToken();
+      setTokenInfo(info);
+    };
+
+    getTokenInfo();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      {tokenInfo ? <Text>{tokenInfo}</Text> : <Text>Loading...</Text>}
+    </View>
+  );
+};
+
+export default Groups;
+
 
 const styles = StyleSheet.create({
     actionButtonIcon: {

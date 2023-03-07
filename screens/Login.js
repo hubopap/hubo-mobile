@@ -1,11 +1,9 @@
 import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, StyleSheet, Image, TextInput, Text, View,} from 'react-native';
-import DatePicker from 'react-native-datepicker';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
-import CookieManager from 'react-native-cookies'
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 axios.defaults.withCredentials = true;
 
@@ -25,8 +23,16 @@ export default class Login extends React.Component{
       username: this.state.username,
       password: this.state.password
     }).then((res) => {
-      if(res.data.message){
-        alert(res.data.message);
+      if(res){
+        if(res.data.message == "Login feito com sucesso"){
+          AsyncStorage.setItem("token", res.data.token)
+          .then(() => {
+            this.props.navigation.replace("Groups");
+          })
+          .catch((error) => {
+            console.error(error); // or do something else with the error
+          });
+        }
       }
     });
   }
