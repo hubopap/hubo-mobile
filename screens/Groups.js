@@ -1,97 +1,122 @@
-/*import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, {useState, useEffect} from "react";
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
-
-export default function Groups({navigation}){
-    const [data, setData] = useState([]);
-    const [loading, setLoading] = useState([]);
-
-    const url = "http://144.24.180.151:3001/grupos";
-    
-    useEffect(()=>{
-        fetch(url)
-        .then((res) => res.json())
-        .then((json) => setData(json))
-        .catch((err) => console.error(error))
-        .finally(() => setLoading(false));
-    }, []);
-    return(
-        <View style={styles.container}>
-            <ScrollView style= {styles.ScrollView}>
-                    {
-                        loading ? (<Text>Loading...</Text>) : (
-                            data.map(
-                                (post) => (
-                                    <TouchableOpacity style={styles.grupo} key={post.id_grupo} onPress={() => {
-                                        navigation.navigate("Group", {
-                                            grupo:post
-                                        })
-                                    }}>
-                                        <Text style={styles.titulo}>{post.nome_grupo}</Text>
-                                        <Text style={styles.desc}>{post.desc_grupo}</Text>
-                                    </TouchableOpacity>
-                                )
-                            )
-                        )
-                    }                
-            </ScrollView>
-        </View>
-    );
-
-    const handleGetToken = async()=>{
-        const dataToken = await AsyncStorage.getItem("token");
-        if(!dataToken){
-            const info = dataToken;
-            return info;
-        }else{
-            const info = "foda-se";
-            return info;
-        }
-    }
-
-    return(
-        <View style={styles.container}>
-            {handleGetToken}
-        </View>
-    )
-
-}
-*/
-
 import React, { useEffect, useState } from 'react';
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import { View, Text, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const Groups = () => {
-  const [tokenInfo, setTokenInfo] = useState(null);
+  const [data, setData] = useState(null);
+  const navigation = useNavigation();
 
-  const handleGetToken = async () => {
-    const dataToken = await AsyncStorage.getItem('token');
-    if (!dataToken) {
-      return null;
-    } else {
-      return dataToken;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axios.get('http://hubo.pt:3001/groups_by_user', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setData(response.data);
+      } catch (error) {
+        if (error.response.status == 403) {
+          try {
+            await AsyncStorage.removeItem('token');
+            navigation.replace('Home');
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+      navigation.replace('Home');
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  useEffect(() => {
-    const getTokenInfo = async () => {
-      const info = await handleGetToken();
-      setTokenInfo(info);
-    };
-
-    getTokenInfo();
-  }, []);
-
   return (
-    <View style={styles.container}>
-      {tokenInfo ? <Text>{tokenInfo}</Text> : <Text>Loading...</Text>}
+    <View>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#fff', borderBottomColor: '#e8e8e8', borderBottomWidth: 1, height: 60 }}>
+        <Text style={{ marginLeft: 20, fontSize: 18 }}>Groups</Text>
+        <TouchableOpacity onPress={handleLogout}>
+          <MaterialIcons name="logout" size={24} color="black" style={{ marginRight: 20 }} />
+        </TouchableOpacity>
+      </View>
+      <View style={{ padding: 20 }}>
+        {data ? (
+          data.map((item) => (
+            <View key={item.id_group} style={{ borderWidth: 1, borderColor: '#e8e8e8', padding: 10, borderRadius: 5, marginBottom: 10 }}>
+              <Text style={{ fontSize: 18 }}>{item.id_group}</Text>
+              <Text style={{ fontSize: 14 }}>{item.desc_group}</Text>
+            </View>
+          ))
+        ) : (
+          <Text>Loading...</Text>
+        )}
+      </View>
     </View>
   );
 };
 
 export default Groups;
+/*
+import React, { useEffect, useState } from 'react';
+import { View, Text } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
 
+const Groups = () => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axios.get('http://hubo.pt:3001/groups_by_user', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setData(response.data);
+      } catch (error) {
+        if(error.response.status == 403){
+            try {
+                await AsyncStorage.removeItem('token');
+                this.props.navigation.replace("Home");
+            } catch (error) {
+                console.error(error);
+            }
+        }
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return (
+    <View>
+      {data ? (
+            data.map((item) => (
+                <Text key={item.id_group}>{item.id_group}</Text>
+            ))
+      ) : (
+        <Text>Loading...</Text>
+      )}
+    </View>
+  );
+};
+
+export default Groups;
 
 const styles = StyleSheet.create({
     actionButtonIcon: {
@@ -122,4 +147,4 @@ const styles = StyleSheet.create({
     ScrollView: {
         width: '100%'
     }
-});
+});*/

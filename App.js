@@ -14,10 +14,12 @@ export default function App(){
       <Stack.Navigator>
       <Stack.Screen
         name="Home"
+        options={{headerShown: false}}
         component={HomePage}
       />
       <Stack.Screen
         name="Register"
+        options={{headerShown: false}}
         component={Register}
       />
       <Stack.Screen
@@ -27,12 +29,13 @@ export default function App(){
       />
       <Stack.Screen
         name="Groups"
+        options={{headerShown: false}}
         component={Groups}
       />
       <Stack.Screen
         name="Group"
         component={Group}
-        options={({ route }) => ({ title: route.params.grupo.nome_grupo })}
+        options={{headerShown: false}}
       />
       </Stack.Navigator>
     </NavigationContainer>
