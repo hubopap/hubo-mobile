@@ -1,70 +1,92 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
-import { MaterialIcons } from '@expo/vector-icons';
 
-const Groups = () => {
-  const [data, setData] = useState(null);
-  const navigation = useNavigation();
+import { Ionicons } from '@expo/vector-icons';
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = await AsyncStorage.getItem('token');
-        const response = await axios.get('http://hubo.pt:3001/groups_by_user', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setData(response.data);
-      } catch (error) {
-        if (error.response.status == 403) {
-          try {
-            await AsyncStorage.removeItem('token');
-            navigation.replace('Home');
-          } catch (error) {
-            console.error(error);
-          }
-        }
-      }
-    };
-
-    fetchData();
-  }, []);
+export default function Groups({ navigation }) {
+  const [groups, setGroups] = useState([]);
 
   const handleLogout = async () => {
-    try {
-      await AsyncStorage.removeItem('token');
-      navigation.replace('Home');
-    } catch (error) {
-      console.error(error);
-    }
+    await AsyncStorage.removeItem('token');
+    navigation.replace('Login');
   };
-  
+
+  useEffect(() => {
+    const getGroups = async () => {
+      const token = await AsyncStorage.getItem('token');
+      const response = await axios.get('http://hubo.pt:3001/groups_by_user', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(response.data);
+      setGroups(response.data);
+    };
+    getGroups();
+  }, []);
+
   return (
-    <View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#fff', borderBottomColor: '#e8e8e8', borderBottomWidth: 1, height: 60 }}>
-        <Text style={{ marginLeft: 20, fontSize: 18 }}>Groups</Text>
-        <TouchableOpacity onPress={handleLogout}>
-          <MaterialIcons name="logout" size={24} color="black" style={{ marginRight: 20 }} />
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Groups</Text>
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutBtn}>
+          <Ionicons name="log-out-outline" size={24} color="black" />
         </TouchableOpacity>
       </View>
-      <View style={{ padding: 20 }}>
-        {data ? (
-          data && data.map((item) => (
-            <View key={item.id_group} style={{ borderWidth: 1, borderColor: '#e8e8e8', padding: 10, borderRadius: 5, marginBottom: 10 }}>
-              <Text style={{ fontSize: 18 }}>{item.id_group}</Text>
-              <Text style={{ fontSize: 14 }}>{item.desc_group}</Text>
-            </View>
-          ))
-        ) : (
-          <Text>Loading...</Text>
-        )}
-      </View>
+      <ScrollView contentContainerStyle={styles.scrollcontainer}>
+        {groups.map((group) => (
+          <TouchableOpacity style={styles.card} key={group.id_group}>
+            <Text style={styles.cardTitle}>{group.name_group} {group.id_group}</Text>
+            <Text style={styles.cardDesc}>{group.desc_group}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
     </View>
   );
-};
+}
 
-export default Groups;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F0F0F0',
+  },
+  header: {
+    backgroundColor: 'white',
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    height: 80,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  scrollcontainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logoutBtn: {
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: '#E0E0E0',
+  },
+  card: {
+    backgroundColor: 'white',
+    width: "80%",
+    borderRadius: 10,
+    padding: 15,
+    marginTop: 15,
+    height: 70,
+    marginBottom: 15,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  cardDesc: {
+    fontSize: 16,
+  },
+});
