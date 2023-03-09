@@ -42,7 +42,7 @@ const Groups = () => {
       console.error(error);
     }
   };
-
+  
   return (
     <View>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#fff', borderBottomColor: '#e8e8e8', borderBottomWidth: 1, height: 60 }}>
@@ -53,7 +53,7 @@ const Groups = () => {
       </View>
       <View style={{ padding: 20 }}>
         {data ? (
-          data.map((item) => (
+          data && data.map((item) => (
             <View key={item.id_group} style={{ borderWidth: 1, borderColor: '#e8e8e8', padding: 10, borderRadius: 5, marginBottom: 10 }}>
               <Text style={{ fontSize: 18 }}>{item.id_group}</Text>
               <Text style={{ fontSize: 14 }}>{item.desc_group}</Text>
@@ -68,83 +68,3 @@ const Groups = () => {
 };
 
 export default Groups;
-/*
-import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
-
-const Groups = () => {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = await AsyncStorage.getItem('token');
-        const response = await axios.get('http://hubo.pt:3001/groups_by_user', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setData(response.data);
-      } catch (error) {
-        if(error.response.status == 403){
-            try {
-                await AsyncStorage.removeItem('token');
-                this.props.navigation.replace("Home");
-            } catch (error) {
-                console.error(error);
-            }
-        }
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  return (
-    <View>
-      {data ? (
-            data.map((item) => (
-                <Text key={item.id_group}>{item.id_group}</Text>
-            ))
-      ) : (
-        <Text>Loading...</Text>
-      )}
-    </View>
-  );
-};
-
-export default Groups;
-
-const styles = StyleSheet.create({
-    actionButtonIcon: {
-        fontSize: 20,
-        height: 22,
-        color: 'white',
-    },
-    grupo: {
-        marginLeft: 30,
-        marginRight: 30,
-        marginTop: 10,
-        marginBottom: 10,
-        height: 175,
-        borderWidth: 2,
-        borderRadius:20,
-    },
-    titulo:{
-        marginTop: 7,
-        fontSize: 25,
-        textAlign: 'center',
-    },
-    desc: {
-        bottom: 7,
-    },
-    container: {
-        alignItems: 'center',
-    },
-    ScrollView: {
-        width: '100%'
-    }
-});*/

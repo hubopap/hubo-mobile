@@ -27,6 +27,8 @@ export default class Register extends React.Component{
       if(res.status == 201){
         this.props.navigation.navigate("Login");
       }
+    }).catch((err) => {
+      console.log(err);
     });
   }
 
