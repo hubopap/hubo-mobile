@@ -38,6 +38,10 @@ export default function Groups({ navigation }) {
     getGroups();
   }, []);
 
+  const handleGroupPress = (group) => {
+    navigation.navigate('Group', { grupo: group });
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -56,7 +60,7 @@ export default function Groups({ navigation }) {
           <Text style={styles.errorMessage}>{errorMessage}</Text>
         ) : (
           groups.map((group) => (
-            <TouchableOpacity style={styles.card} key={group.id_group}>
+            <TouchableOpacity style={styles.card} key={group.id_group} onPress={() => handleGroupPress(group)}>
               <Text style={styles.cardTitle}>{group.name_group} {group.id_group}</Text>
               <Text style={styles.cardDesc}>{group.desc_group}</Text>
             </TouchableOpacity>

@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import { TouchableOpacity, StyleSheet, Image, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 export default function HomePage() {
   const [tokenInfo, setTokenInfo] = useState(null);
@@ -17,10 +18,31 @@ export default function HomePage() {
     }
   };
 
+  const isLoggedIn = async () => {
+    const token = await handleGetToken();   
+    const isLoggedIn = await axios.get('http://hubo.pt:3001/userdata', {
+      headers: { Authorization: `Bearer ${token}` },
+    }).then((res) => {
+      if(res.data.loggedIn == true){
+        return true;
+      }else{
+        return false;
+      }
+    }).catch((error) => {
+      if (error.response && error.response.status === 401) {
+        return false;
+      } else {
+        return false;
+      }
+    });
+  }
+
   useEffect(() => {
     const checkToken = async () => {
+      const islogged = await isLoggedIn();
       const token = await handleGetToken();
-      if (token) {
+
+      if (islogged == true) {
         navigation.replace('Groups');
       } else {
         navigation.replace('Register');
