@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
@@ -9,6 +9,9 @@ export default function Groups({ navigation }) {
   const [groups, setGroups] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [showMenu, setShowMenu] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [name_group, setNameGroup] = useState('');
+  const [desc_group, setDescGroup] = useState('');
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('token');
@@ -29,6 +32,30 @@ export default function Groups({ navigation }) {
         }
         setGroups(response.data);
       }
+    }catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCreateGroupForm = () => {
+    setShowForm(true);
+  };
+
+  const handleCreateGroup = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      await axios.post('http://hubo.pt:3001/create_group', {
+        name_group: name_group,
+        desc_group: desc_group
+      }, 
+      {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      getGroups();
+      setShowForm(false);
     } catch (error) {
       console.log(error);
     }
@@ -56,38 +83,66 @@ export default function Groups({ navigation }) {
         </View>
       </View>   
       <ScrollView contentContainerStyle={styles.scrollcontainer}>
-        {errorMessage ? (
-          <Text style={styles.errorMessage}>{errorMessage}</Text>
-        ) : (
-          groups.map((group) => (
-            <TouchableOpacity style={styles.card} key={group.id_group} onPress={() => handleGroupPress(group)}>
-              <Text style={styles.cardTitle}>{group.name_group} {group.id_group}</Text>
-              <Text style={styles.cardDesc}>{group.desc_group}</Text>
-            </TouchableOpacity>
-          ))
-        )}
+        {
+          errorMessage ? (
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+          ):(
+            groups.map(
+              (group) => (
+                <TouchableOpacity style={styles.card} key={group.id_group} onPress={() => handleGroupPress(group)}>
+                  <Text style={styles.cardTitle}>{group.name_group}</Text>
+                  <Text style={styles.cardDesc}>{group.desc_group}</Text>
+                </TouchableOpacity>
+              )
+            )
+          )
+        }
       </ScrollView>
       <TouchableOpacity onPress={() => setShowMenu(!showMenu)} style={styles.menuBtn}>
-        <Ionicons name="ellipsis-vertical-outline" size={24} color="white" />
+        <Ionicons name="ellipsis-vertical-outline" size={30} color="white" />
       </TouchableOpacity>
-      {showMenu && (
-        <View style={styles.menu}>
-          <TouchableOpacity style={[styles.menuItem, styles.topLeft]}>
-            <Ionicons name="add-outline" size={24} color="black" />
-            <Text style={styles.menuItemText}>Create Groups</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.menuItem, styles.top]}>
-            <Ionicons name="md-people" size={24} color="black" />
-            <Text style={styles.menuItemText}>Users</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleLogout} style={[styles.menuItem, styles.left]}>
-            <Ionicons name="log-out-outline" size={24} color="black" />
-            <Text style={styles.menuItemText}>Logout</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      {
+        showMenu && (
+          <View style={styles.menu}>
+            <TouchableOpacity style={[styles.menuItem, styles.topLeft]} onPress={() => {setShowMenu(false); handleCreateGroupForm()}}>
+              <Ionicons name="add-outline" size={24} color="black" />
+              <Text style={styles.menuItemText}>Create Groups</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.menuItem, styles.top]}>
+              <Ionicons name="md-people" size={24} color="black" />
+              <Text style={styles.menuItemText}>Users</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleLogout} style={[styles.menuItem, styles.left]}>
+              <Ionicons name="log-out-outline" size={24} color="black" />
+              <Text style={styles.menuItemText}>Logout</Text>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+      {
+        showForm && (
+          <View style={styles.modal}>
+            <TouchableOpacity onPress={() => setShowForm(false)} style={styles.closeButton}>
+              <Ionicons name="close-outline" size={30} color="white" />
+            </TouchableOpacity>
+            <View style={styles.form}>
+              <Text style={styles.formTitle}>Create Group</Text>
+              <TextInput placeholder="Group Name" onChangeText={val => setNameGroup(val)}style={styles.input} />
+              <TextInput placeholder="Group Description" onChangeText={val => setDescGroup(val)}style={styles.input} />
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity onPress={() => setShowForm(false)} style={[styles.button, styles.cancelButton]}>
+                  <Text style={styles.buttonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleCreateGroup()} style={[styles.button, styles.submitButton]}>
+                  <Text style={styles.buttonText}>Create</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        )
+      }
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -116,7 +171,6 @@ const styles = StyleSheet.create({
   },
   scrollcontainer: {
     marginTop: 8,
-    marginBottom: 8,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -235,5 +289,57 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 3,
+  },
+  modal: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  form: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+  },
+  formTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  button: {
+    padding: 10,
+    borderRadius: 5,
+    marginLeft: 10,
+  },
+  cancelButton: {
+    backgroundColor: 'gray',
+  },
+  submitButton: {
+    backgroundColor: '#285e89',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });

@@ -44,27 +44,21 @@ export default function HomePage() {
 
       if (islogged == true) {
         navigation.replace('Groups');
-      } else {
-        navigation.replace('Register');
       }
       setTokenInfo(token);
     };
     checkToken();
   }, [navigation]);
 
-  if (!tokenInfo) {
-    return (
-      <View style={styles.container}>
-        <Image source={require('../assets/logo_hubo_square.png')} style={styles.logo} resizeMode="contain" />
-        <Text style={styles.text}>Work Smart, Work Hubo.</Text>
-        <TouchableOpacity onPress={() => navigation.replace('Register')}>
-          <Text style={styles.get_started}>Get Started</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  } else {
-    return null;
-  }
+  return (
+    <View style={styles.container}>
+      <Image source={require('../assets/hubo_body.png')} style={styles.logo} resizeMode="contain" />
+      <Text style={styles.text}>Work Smart, Work Hubo.</Text>
+      <TouchableOpacity onPress={() => navigation.replace('Register')}>
+        <Text style={styles.get_started}>Get Started</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -74,7 +68,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: 'black',
-    marginTop: '5%',
+    marginTop: -35,
     fontSize: 20,
   },
   logo: {
@@ -84,7 +78,7 @@ const styles = StyleSheet.create({
     marginTop: '25%',
   },
   get_started: {
-    backgroundColor: '#3A59FF',
+    backgroundColor: '#285e89',
     color: 'white',
     width: '75%',
     borderRadius: 30,
@@ -92,6 +86,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     padding: '3%',
     fontSize: 20,
-    marginTop: '2%',
+    marginTop: '40%',
   },
 });

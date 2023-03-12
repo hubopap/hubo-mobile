@@ -63,6 +63,9 @@ export default class Login extends React.Component{
         <TouchableOpacity onPress={() =>  {this.loginUser()}}>
             <Text style={styles.login}>Login</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.question} onPress={() =>  {this.props.navigation.replace("Register")}}>
+            <Text>Ainda não tem conta?</Text>
+        </TouchableOpacity>
       </View>
     )
   }
@@ -70,15 +73,18 @@ export default class Login extends React.Component{
 }
 
 const styles = StyleSheet.create({
+  question: {
+    top: 20
+  },
   input: {
     marginTop: 10,
-    width: "75%",
+    width: "65%",
     height: 40,
-    backgroundColor: '#42A5F5',
+    backgroundColor: '#285e89',
     margin: 10,
     padding: 8,
     color: 'white',
-    borderRadius: 25,
+    borderRadius: 15,
     fontSize: 15,
     fontWeight: '500',
   },
@@ -92,21 +98,21 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   logo:{
-    width: 100,
-    height: 100,
+    width: 130,
+    height: 130,
     margin: 'auto',
     marginTop: '40%',
     marginBottom: '20%',
   },
   login: {
-    backgroundColor: '#3A59FF',
+    backgroundColor: '#24547b',
     color: 'white',
     width: "75%",
-    borderRadius: 30,
+    borderRadius: 10,
     textAlign: 'center',
     fontWeight: 'bold',
     padding: "3%",
     fontSize:  20,
-    marginTop: '20%'
+    marginTop: '25%'
   }
 });
