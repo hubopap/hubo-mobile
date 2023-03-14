@@ -20,10 +20,13 @@ export default function HomePage() {
 
   const isLoggedIn = async () => {
     const token = await handleGetToken();   
-    const isLoggedIn = await axios.get('http://hubo.pt:3001/userdata', {
-      headers: { Authorization: `Bearer ${token}` },
-    }).then((res) => {
-      if(res.data.loggedIn == true){
+    console.log(token);
+    return axios.get('http://hubo.pt:3001/userdata', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    }).then((response) => {
+      if(response.data.loggedIn == true){
         return true;
       }else{
         return false;
@@ -43,6 +46,7 @@ export default function HomePage() {
       const token = await handleGetToken();
 
       if (islogged == true) {
+        console.log("ola");
         navigation.replace('Groups');
       }
       setTokenInfo(token);

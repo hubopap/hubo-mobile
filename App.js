@@ -2,6 +2,7 @@ import HomePage from "./screens/HomePage";
 import Register from "./screens/Register";
 import Login from "./screens/Login";
 import Groups from "./screens/Groups";
+import Users from "./screens/Users";
 import Group from "./screens/Group";
 import { NavigationContainer, NavigationRouteContext } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -35,6 +36,11 @@ export default function App(){
       <Stack.Screen
         name="Group"
         component={Group}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Users"
+        component={Users}
         options={{headerShown: false}}
       />
       </Stack.Navigator>

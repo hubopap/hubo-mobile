@@ -32,7 +32,7 @@ export default function Groups({ navigation }) {
         }
         setGroups(response.data);
       }
-    }catch (error) {
+    } catch (error) {
       console.log(error);
     }
   };
@@ -69,6 +69,10 @@ export default function Groups({ navigation }) {
     navigation.navigate('Group', { grupo: group });
   }
 
+  const handleUsersPress = () => {
+    navigation.navigate('Users');
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -83,42 +87,36 @@ export default function Groups({ navigation }) {
         </View>
       </View>   
       <ScrollView contentContainerStyle={styles.scrollcontainer}>
-        {
-          errorMessage ? (
-            <Text style={styles.errorMessage}>{errorMessage}</Text>
-          ):(
-            groups.map(
-              (group) => (
-                <TouchableOpacity style={styles.card} key={group.id_group} onPress={() => handleGroupPress(group)}>
-                  <Text style={styles.cardTitle}>{group.name_group}</Text>
-                  <Text style={styles.cardDesc}>{group.desc_group}</Text>
-                </TouchableOpacity>
-              )
-            )
-          )
-        }
+        {errorMessage ? (
+          <Text style={styles.errorMessage}>{errorMessage}</Text>
+        ) : (
+          groups.map((group) => (
+            <TouchableOpacity style={styles.card} key={group.id_group} onPress={() => handleGroupPress(group)}>
+              <Text style={styles.cardTitle}>{group.name_group}</Text>
+              <Text style={styles.cardDesc}>{group.desc_group}</Text>
+            </TouchableOpacity>
+          ))
+        )}
       </ScrollView>
       <TouchableOpacity onPress={() => setShowMenu(!showMenu)} style={styles.menuBtn}>
-        <Ionicons name="ellipsis-vertical-outline" size={30} color="white" />
+        <Ionicons name="ellipsis-vertical-outline" size={24} color="white" />
       </TouchableOpacity>
-      {
-        showMenu && (
-          <View style={styles.menu}>
-            <TouchableOpacity style={[styles.menuItem, styles.topLeft]} onPress={() => {setShowMenu(false); handleCreateGroupForm()}}>
-              <Ionicons name="add-outline" size={24} color="black" />
-              <Text style={styles.menuItemText}>Create Groups</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.menuItem, styles.top]}>
-              <Ionicons name="md-people" size={24} color="black" />
-              <Text style={styles.menuItemText}>Users</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleLogout} style={[styles.menuItem, styles.left]}>
-              <Ionicons name="log-out-outline" size={24} color="black" />
-              <Text style={styles.menuItemText}>Logout</Text>
-            </TouchableOpacity>
-          </View>
-        )
-      }
+      {showMenu && (
+        <View style={styles.menu}>
+          <TouchableOpacity style={[styles.menuItem, styles.topLeft]} onPress={() => {setShowMenu(false); handleCreateGroupForm()}}>
+            <Ionicons name="add-outline" size={24} color="black" />
+            <Text style={styles.menuItemText}>Create Groups</Text>
+          </TouchableOpacity>
+          <TouchableOpacity  onPress={() => handleUsersPress()} style={[styles.menuItem, styles.top]}>
+            <Ionicons name="md-people" size={24} color="black" />
+            <Text style={styles.menuItemText}>Users</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleLogout} style={[styles.menuItem, styles.left]}>
+            <Ionicons name="log-out-outline" size={24} color="black" />
+            <Text style={styles.menuItemText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      )}
       {
         showForm && (
           <View style={styles.modal}>
@@ -142,7 +140,7 @@ export default function Groups({ navigation }) {
         )
       }
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
