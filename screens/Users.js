@@ -9,15 +9,20 @@ export default function Users({ navigation }) {
   const [users, setUsers] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [showMenu, setShowMenu] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleUsersPress = (user) => {
+    navigation.navigate('User', { user: user });
+  }
+
+  const handleGroupsPress = () => {
+    navigation.navigate('Users');
+  }
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('token');
     navigation.replace('Login');
   };
-
-  const handleGroupsPress = () => {
-    navigation.navigate('Groups');
-  }
 
   const getUsers = async () => {
     try {
@@ -38,10 +43,6 @@ export default function Users({ navigation }) {
     getUsers();
   }, []);
 
-//   const handleGroupPress = (group) => {
-//     navigation.navigate('Group', { grupo: group });
-//   }
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -54,15 +55,21 @@ export default function Users({ navigation }) {
             <Ionicons name="md-person" size={24} color="white" />
           </TouchableOpacity>
         </View>
-      </View>   
+      </View>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search Users"
+        value={searchTerm}
+        onChangeText={setSearchTerm}
+      />   
       <ScrollView contentContainerStyle={styles.scrollcontainer}>
         {
           errorMessage ? (
             <Text style={styles.errorMessage}>{errorMessage}</Text>
           ):(
-            users.map(
+            users.filter(user => user.username.toLowerCase().includes(searchTerm.toLowerCase())).map(
               (user) => (
-                <TouchableOpacity style={styles.card} key={user.username}>
+                <TouchableOpacity style={styles.card} key={user.username} onPress={() => handleUsersPress(user)}>
                   <Text style={styles.cardTitle}>{user.username}</Text>
                 </TouchableOpacity>
               )
@@ -76,7 +83,7 @@ export default function Users({ navigation }) {
       {
         showMenu && (
           <View style={styles.menu}>
-            <TouchableOpacity style={[styles.menuItem, styles.topLeft]} onPress={() => {setShowMenu(false); handleCreateGroupForm()}}>
+            <TouchableOpacity style={[styles.menuItem, styles.topLeft]}>
               <Ionicons name="add-outline" size={24} color="black" />
               <Text style={styles.menuItemText}>Create Groups</Text>
             </TouchableOpacity>
@@ -160,17 +167,13 @@ const styles = StyleSheet.create({
     width: '80%',
     borderRadius: 10,
     padding: 15,
-    marginTop: 15,
-    height: 55,
+    height: 60,
     marginBottom: 15,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
-  },
-  cardDesc: {
-    fontSize: 16,
   },
   errorMessage: {
     fontSize: 18,
@@ -308,4 +311,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  searchInput: {
+    height: 40,
+    margin: 10,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#ccc'
+  }
 });
