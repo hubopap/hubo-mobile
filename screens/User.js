@@ -1,26 +1,28 @@
 import React, {useState, useEffect} from "react";
 import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function User({navigation}){
     const route = useRoute();
-    const [user, setUser] = useState([]);
+    const [user, setUser] = useState();
 
     const getUserDetails = async () => {
-        try {
-            const token = await AsyncStorage.getItem('token');
-            const response = await axios.get('http://hubo.pt:3001/user_details', {
-                headers: { Authorization: `Bearer ${token}` },
-                username: route.params.user.username
-            });
-            if (response) {
-                setUser();
-            }
-        } catch (error) {
-            console.log(error);
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axios.get('http://hubo.pt:3001/user_details', {
+          params: { username: route.params.user.username },
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log(response);
+        if (response) {
+          setUser();
         }
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     useEffect(() => {
@@ -40,6 +42,7 @@ export default function User({navigation}){
                     </TouchableOpacity>
                 </View>
             </View>
+            <View><Text>{JSON.stringify(user)}</Text></View>
         </View>
     );
 
