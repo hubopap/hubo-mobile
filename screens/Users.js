@@ -12,6 +12,7 @@ export default function Users({ navigation }) {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleUsersPress = (user) => {
+    console.log(user);
     navigation.navigate('User', { user: user });
   }
 
@@ -28,12 +29,12 @@ export default function Users({ navigation }) {
     try {
       const token = await AsyncStorage.getItem('token');
       const response = await axios.get('http://hubo.pt:3001/users', {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {Authorization: `Bearer ${token}`},
       });
-        if(errorMessage){
-          setErrorMessage(null);
-        }
-        setUsers(response.data);
+      if(errorMessage){
+        setErrorMessage(null);
+      }
+      setUsers(response.data);
     }catch (error) {
       console.log(error);
     }

@@ -6,33 +6,40 @@ import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function User({navigation}){
+    let user_query;
     const route = useRoute();
     const [user, setUser] = useState();
-
-    const getUserDetails = async () => {
+    
+    const getUserDetails = async (user_query_fn) => {
       try {
         const token = await AsyncStorage.getItem('token');
-        const response = await axios.get('http://hubo.pt:3001/user_details', {
-          params: { username: route.params.user.username },
-          headers: { Authorization: `Bearer ${token}` }
+        response = await axios.get('http://hubo.pt:3001/user_details', {
+          data: {
+            user_query: user_query_fn,
+          },
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+          
         });
-        console.log(response);
-        if (response) {
-          setUser();
-        }
+        return response;
       } catch (error) {
         console.log(error);
       }
     };
 
     useEffect(() => {
-        getUserDetails();
+
+      user_query = route.params.user.id_user;
+      const res = getUserDetails(user_query);
+      setUser(res);
     }, []);
 
     return(
         <View>
             <View style={styles.header}>
-                <Text style={styles.title}>{route.params.user.username}</Text>
+                <Text style={styles.title}>{route.params.user.id_user}</Text>
                 <View style={{flexDirection: 'row'}}>
                     <TouchableOpacity style={[styles.refreshBtn, {marginLeft: 10}]}>
                         <Ionicons name="refresh-outline" size={24} color="white" />
