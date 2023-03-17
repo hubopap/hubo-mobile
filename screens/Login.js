@@ -41,7 +41,7 @@ export default class Login extends React.Component{
     return(
       <View style={styles.container}>
         <Image 
-          source={require('../assets/logo_hubo_square.png')}
+          source={require('../assets/icon.png')}
           style={styles.logo}
           resizeMode="contain"
         ></Image>
