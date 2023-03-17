@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 export default function Groups({ navigation }) {
   const [groups, setGroups] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
+  const [user, setUser] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [name_group, setNameGroup] = useState('');
@@ -16,6 +17,15 @@ export default function Groups({ navigation }) {
   const handleLogout = async () => {
     await AsyncStorage.removeItem('token');
     navigation.replace('Login');
+  };
+
+  const handleGetToken = async () => {
+    const dataToken = await AsyncStorage.getItem('token');
+    if (!dataToken) {
+      return null;
+    } else {
+      return dataToken;
+    }
   };
 
   const getGroups = async () => {
@@ -40,6 +50,26 @@ export default function Groups({ navigation }) {
   const handleCreateGroupForm = () => {
     setShowForm(true);
   };
+
+  const isLoggedIn = async () => {
+    const token = await handleGetToken();
+    try {
+      const response = await axios.get('http://hubo.pt:3001/userdata', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+      });
+      setUser(response.data.user);
+      console.log(response.data);
+      return response;
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        return false;
+      } else {
+        return false;
+      }
+    }
+  }
 
   const handleCreateGroup = async () => {
     try {
@@ -73,6 +103,14 @@ export default function Groups({ navigation }) {
     navigation.navigate('Users');
   }
 
+  const handleProfilePress = async () => {
+    const response = await isLoggedIn();
+    console.log(response);
+    if (response && response.data && response.data.loggedIn) {
+      navigation.navigate('User', { user: response.data.user });
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -81,7 +119,7 @@ export default function Groups({ navigation }) {
           <TouchableOpacity onPress={getGroups} style={[styles.refreshBtn, {marginLeft: 10}]}>
             <Ionicons name="refresh-outline" size={24} color="white" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.profileBtn}>
+          <TouchableOpacity onPress={() => handleProfilePress()} style={styles.profileBtn}>
             <Ionicons name="md-person" size={24} color="white" />
           </TouchableOpacity>
         </View>
