@@ -36,10 +36,10 @@ export default function AddUsers({ navigation }) {
           setErrorMessage(null);
         }
       }
-      navigation.replace("Group",{grupo: route.params.group})
     } catch (error) {
       console.log(error);
     }
+    navigation.goBack();
   }
 
   const getUsers = async () => {
