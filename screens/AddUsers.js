@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { useRoute } from '@react-navigation/native';
 
 import { Ionicons } from '@expo/vector-icons';
 
-export default function Users({ navigation }) {
+export default function AddUsers({ navigation }) {
+
+    const route = useRoute();
   const [users, setUsers] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [showMenu, setShowMenu] = useState(false);
@@ -16,28 +19,25 @@ export default function Users({ navigation }) {
     navigation.navigate('User', { user: user });
   }
 
-  const handleGroupsPress = () => {
-    navigation.navigate('Users');
-  }
-
   const handleLogout = async () => {
     await AsyncStorage.removeItem('token');
     navigation.replace('Login');
   };
 
   const getUsers = async () => {
-    try {
       const token = await AsyncStorage.getItem('token');
-      const response = await axios.get('http://hubo.pt:3001/users', {
-        headers: {Authorization: `Bearer ${token}`},
+      await axios.get('http://hubo.pt:3001/non_group_users', {
+        id_group: route.params.id_group
+      }, 
+      {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }).then((res)=>  {
+        console.log(res);
       });
-      if(errorMessage){
-        setErrorMessage(null);
-      }
       setUsers(response.data);
-    }catch (error) {
-      console.log(error);
-    }
   };
 
   useEffect(() => {
@@ -71,13 +71,16 @@ export default function Users({ navigation }) {
             users.filter(user => user.username.toLowerCase().includes(searchTerm.toLowerCase())).map(
               (user) => (
                 <TouchableOpacity style={styles.card} key={user.username} onPress={() => handleUsersPress(user)}>
-                  <Text style={styles.cardTitle}>{user.username}</Text>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                        <Text style={styles.cardTitle}>{user.username}</Text>
+                        <Ionicons name="add-circle-outline" size={24} color="#285e89" />
+                    </View>
                 </TouchableOpacity>
               )
             )
           )
         }
-      </ScrollView>
+      </ScrollView>     
     </View>
   )
 }

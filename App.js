@@ -5,6 +5,7 @@ import Groups from "./screens/Groups";
 import Users from "./screens/Users";
 import Group from "./screens/Group";
 import User from "./screens/User";
+import AddUsers from "./screens/AddUsers";
 import { NavigationContainer, NavigationRouteContext } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
@@ -47,6 +48,11 @@ export default function App(){
       <Stack.Screen
         name="User"
         component={User}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AddUsers"
+        component={AddUsers}
         options={{headerShown: false}}
       />
       </Stack.Navigator>
