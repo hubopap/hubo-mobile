@@ -3,13 +3,12 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useRoute } from '@react-navigation/native';
-
 import { Ionicons } from '@expo/vector-icons';
 
 export default function AddUsers({ navigation }) {
 
-    const route = useRoute();
-  const [users, setUsers] = useState([]);
+  const route = useRoute();
+  const [nongroupusers, setNonGroupUsers] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [showMenu, setShowMenu] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,25 +18,49 @@ export default function AddUsers({ navigation }) {
     navigation.navigate('User', { user: user });
   }
 
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem('token');
-    navigation.replace('Login');
-  };
+  const AddUserToGroup = async (id_user) => {
+    console.log(id_user);
+    console.log(route.params.id_group);
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const response = await axios.post('http://hubo.pt:3001/add_user_to_group', {
+        user_to_add: id_user,
+        group_id: route.params.id_group
+      },{
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.data.message) {
+        setErrorMessage('Create Tasks and start Working!');
+      }else{
+        if(errorMessage){
+          setErrorMessage(null);
+        }
+      }
+      navigation.replace("Group",{grupo: route.params.group})
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const getUsers = async () => {
+    try {
       const token = await AsyncStorage.getItem('token');
-      await axios.get('http://hubo.pt:3001/non_group_users', {
-        id_group: route.params.id_group
-      }, 
-      {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      }).then((res)=>  {
-        console.log(res);
+      const response = await axios.post('http://hubo.pt:3001/non_group_users', {id_group: route.params.id_group}, {
+        
+        headers: { Authorization: `Bearer ${token}` },
       });
-      setUsers(response.data);
+      if (response.data.message) {
+        setErrorMessage('Create Tasks and start Working!');
+      }else{
+        if(errorMessage){
+          setErrorMessage(null);
+        }
+        setNonGroupUsers(response.data.users);
+        console.log(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -68,12 +91,12 @@ export default function AddUsers({ navigation }) {
           errorMessage ? (
             <Text style={styles.errorMessage}>{errorMessage}</Text>
           ):(
-            users.filter(user => user.username.toLowerCase().includes(searchTerm.toLowerCase())).map(
+            nongroupusers.filter(user => user.username.toLowerCase().includes(searchTerm.toLowerCase())).map(
               (user) => (
-                <TouchableOpacity style={styles.card} key={user.username} onPress={() => handleUsersPress(user)}>
+                <TouchableOpacity style={styles.card} key={user.username}>
                     <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                         <Text style={styles.cardTitle}>{user.username}</Text>
-                        <Ionicons name="add-circle-outline" size={24} color="#285e89" />
+                        <Ionicons onPress={() => {AddUserToGroup(user.id_user)}} name="add-circle-outline" size={24} color="#285e89" />
                     </View>
                 </TouchableOpacity>
               )

@@ -16,7 +16,6 @@ export default function Group({ navigation }) {
   const [descTask, setDescTask] = useState('');
   const [deadlineTask, setDeadlineTask] = useState('');
   const [user, setUser] = useState([]);
-  const [nonGroupUsers, setNonGroupUsers] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [groupUsers, setGroupUsers] = useState([]);
@@ -80,18 +79,6 @@ export default function Group({ navigation }) {
       console.log(error);
     }
   };
-
-  const getNonGroupUsers = async () => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      const response = await axios.post('http://hubo.pt:3001/non_group_users', {id_group: route.params.grupo.id_group}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setNonGroupUsers(response.data.users);
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   const getTasks = async () => {
     try {
@@ -170,11 +157,10 @@ export default function Group({ navigation }) {
   useEffect(() => {
     getTasks();
     getGroupUsers();
-    getNonGroupUsers();
   }, [selectedUserPerm, assignedUser]);
 
   const handleUsersPress = () => {
-    navigation.navigate('AddUsers', {id_group: route.params.grupo.id_group});
+    navigation.navigate('AddUsers', {group:route.params.grupo, id_group: route.params.grupo.id_group});
   }
 
   const handleProfilePress = async () => {
