@@ -9,11 +9,11 @@ axios.defaults.withCredentials = true;
 export default class Register extends React.Component{
 
 state = {
-  username: '', password: '', email: ''
+  username: '', password: '', showPassword: false, email: '', 
 }
 
 validateEmail(email) {
-  const re = /\S+@\S+.\S+/;
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   if(re.test(email)){
     return true;
   }else{
@@ -30,6 +30,12 @@ validatePassword(password) {
     alert("Password must have 8 characters, lower and upercase letters, numbers and special characters");
     return false;
   }
+}
+
+togglePasswordVisibility = () => {
+  this.setState(prevState => ({
+    showPassword: !prevState.showPassword
+  }));
 }
 
 onChangeText = (key, val) => {
@@ -51,14 +57,17 @@ registerUser() {
         }else{
           if(res.status == 400){
             alert(res.message);
+          }else{
+            alert("There was an error connecting to the server. Try again later.");
           }
         }
       }).catch((err) => {
         console.log(err);
+        alert("There was an error connecting to the server. Try again later.");
       });
     }
   }else{
-    alert("Username must have at least 8 characters")
+    alert("Username must have at least 8 characters");
   }
 }
   
@@ -77,14 +86,29 @@ registerUser() {
       placeholderTextColor='white'
       onChangeText={val => this.onChangeText('username', val)}
       />
-      <TextInput
+      {/* <TextInput
       style={styles.input}
       placeholder='Password'
       secureTextEntry={true}
       autoCapitalize="none"
       placeholderTextColor='white'
       onChangeText={val => this.onChangeText('password', val)}
-      />
+      /> */}
+      <View style={styles.passwordInputContainer}>
+        <TextInput
+          style={styles.passwordInput}
+          placeholder='Password'
+          secureTextEntry={!this.state.showPassword}
+          autoCapitalize="none"
+          placeholderTextColor='white'
+          onChangeText={val => this.onChangeText('password', val)}
+        />
+        <TouchableOpacity onPress={this.togglePasswordVisibility}>
+          <Text style={styles.showHidePassword}>
+            {this.state.showPassword ? 'Hide' : 'Show'}
+          </Text>
+        </TouchableOpacity>
+      </View>
       <TextInput
       style={styles.input}
       placeholder='Email'
@@ -121,6 +145,31 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  passwordInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+    width: '65%',
+    height: 40,
+    backgroundColor: '#285e89',
+    margin: 10,
+    padding: 8,
+    color: 'white',
+    borderRadius: 15,
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  passwordInput: {
+    flex: 1,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  showHidePassword: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 15,
+    marginLeft: 5,
   },
   text: {
     color: 'black',

@@ -8,22 +8,12 @@ import { Ionicons } from '@expo/vector-icons';
 export default function Users({ navigation }) {
   const [users, setUsers] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
-  const [showMenu, setShowMenu] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleUsersPress = (user) => {
     console.log(user);
     navigation.navigate('User', { user: user });
   }
-
-  const handleGroupsPress = () => {
-    navigation.navigate('Users');
-  }
-
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem('token');
-    navigation.replace('Login');
-  };
 
   const getUsers = async () => {
     try {
@@ -259,11 +249,6 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     width: '80%',
-  },
-  formTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
   },
   input: {
     borderWidth: 1,
