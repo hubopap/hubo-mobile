@@ -188,7 +188,7 @@ export default function Group({ navigation }) {
           <Text style={styles.errorMessage}>{errorMessage}</Text>
         ) : (
           tasks.map((task) => (
-            task.state_task != "0" && (
+            task.state_task != "4" && (
               <TouchableOpacity style={styles.card} key={task.task.id_task}>
                 <Text style={styles.cardTitle}>{task.task.id_task} - perm {task.permission}</Text>
                 <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
