@@ -132,23 +132,30 @@ export default function Group({ navigation }) {
 
   const handleCreateTask = async () => {
     try {
-      console.log(assignedUser, selectedUserPerm, route.params.grupo.id_group, descTask, deadlineTask);
-      const token = await AsyncStorage.getItem('token');
-      await axios.post('http://hubo.pt:3001/create_task', {
-        assigned_user: assignedUser,
-        assigned_user_perm: selectedUserPerm,
-        id_group: route.params.grupo.id_group,
-        desc_task: descTask,
-        deadline_task: deadlineTask
-      }, 
-      {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      getTasks();
-      setShowForm(false);
+      const now = new Date();
+      const date1 = now.getDate();
+      const date2 = (new Date(deadlineTask)).getDate();
+
+      if(date2<date1){
+        alert ("Select a valid date");
+      }else{
+        const token = await AsyncStorage.getItem('token');
+        await axios.post('http://hubo.pt:3001/create_task', {
+          assigned_user: assignedUser,
+          assigned_user_perm: selectedUserPerm,
+          id_group: route.params.grupo.id_group,
+          desc_task: descTask,
+          deadline_task: deadlineTask
+        }, 
+        {
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        getTasks();
+        setShowForm(false);
+      }
     } catch (error) {
       console.log(error);
     }
