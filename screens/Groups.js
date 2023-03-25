@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { BackHandler } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
@@ -92,8 +93,14 @@ export default function Groups({ navigation }) {
   };
 
   useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (navigation.isFocused()) {
+        return true;
+      }
+    });
+
     getGroups();
-  }, []);
+  }, [navigation]);
 
   const handleGroupPress = (group) => {
     navigation.navigate('Group', { grupo: group });
@@ -246,18 +253,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginTop: 50,
   },
-  menuBtnContainer: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: 'white',
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 3,
-  },
   menuBtn: {
     position: 'absolute',
     bottom: 35,
@@ -289,42 +284,6 @@ const styles = StyleSheet.create({
   },
   menuItemText: {
     marginLeft: 10,
-  },
-  menuBtnLeft: {
-    position: 'absolute',
-    bottom: 35,
-    left: 35,
-    backgroundColor: '#285e89',
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 3,
-  },
-  menuBtnTop: {
-    position: 'absolute',
-    top: 35,
-    right: 35,
-    backgroundColor: '#285e89',
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 3,
-  },
-  menuBtnTopLeft: {
-    position: 'absolute',
-    top: 35,
-    left: 35,
-    backgroundColor: '#285e89',
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 3,
   },
   modal: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',

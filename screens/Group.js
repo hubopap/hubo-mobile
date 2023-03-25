@@ -4,6 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
 import axios from 'axios';
+import moment from 'moment';
 
 import { Ionicons } from '@expo/vector-icons';
 
@@ -36,15 +37,6 @@ export default function Group({ navigation }) {
       set_deadline_date(formattedValue);
     }
   };
-
-  const set_deadline_date = async (date) => {
-    const day = date.slice(0,2);
-    const month = date.slice(3,5);
-    const year = date.slice(6, 11);
-    const dateFormat = year + "-" + month + "-" + day + "T23:59:59.999Z";
-    setDeadlineTask(dateFormat);
-  };
-  
  
   const handleLogout = async () => {
     await AsyncStorage.removeItem('token');
@@ -130,32 +122,51 @@ export default function Group({ navigation }) {
     setDate('');
   }
 
-  const handleCreateTask = async () => {
-    try {
-      const now = new Date();
-      const date1 = now.getDate();
-      const date2 = (new Date(deadlineTask)).getDate();
+  const goToTask = async (id_task, perm_task) => {
+    navigation.navigate("Task", {id_task: id_task, perm_task: perm_task, group: route.params.grupo});
+  }
 
-      if(date2<date1){
-        alert ("Select a valid date");
-      }else{
-        const token = await AsyncStorage.getItem('token');
-        await axios.post('http://hubo.pt:3001/create_task', {
+  const set_deadline_date = async (date) => {
+    const day = date.slice(0,2);
+    const month = date.slice(3,5);
+    const year = date.slice(6, 11);
+    const dateFormat = year + "-" + month + "-" + day + "T23:59:59.999Z";
+    setDeadlineTask(dateFormat);
+  };
+
+  const handleCreateTask = async () => {
+    const deadlineMoment = moment(deadlineTask);
+    if (!deadlineMoment.isValid()) {
+      alert('Select a valid date');
+      return;
+    }
+  
+    const deadline = deadlineMoment.toDate();
+    if (deadline < new Date()) {
+      alert('Select a future date');
+      return;
+    }
+  
+    try {
+      const token = await AsyncStorage.getItem('token');
+      await axios.post(
+        'http://hubo.pt:3001/create_task',
+        {
           assigned_user: assignedUser,
           assigned_user_perm: selectedUserPerm,
           id_group: route.params.grupo.id_group,
           desc_task: descTask,
-          deadline_task: deadlineTask
-        }, 
+          deadline_task: deadline,
+        },
         {
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        getTasks();
-        setShowForm(false);
-      }
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      getTasks();
+      setShowForm(false);
     } catch (error) {
       console.log(error);
     }
@@ -164,7 +175,7 @@ export default function Group({ navigation }) {
   useEffect(() => {
     getTasks();
     getGroupUsers();
-  }, [selectedUserPerm, assignedUser, groupUsers]);
+  }, []);
 
   const handleUsersPress = () => {
     navigation.navigate('AddUsers', {group:route.params.grupo, id_group: route.params.grupo.id_group});
@@ -194,14 +205,33 @@ export default function Group({ navigation }) {
         {errorMessage ? (
           <Text style={styles.errorMessage}>{errorMessage}</Text>
         ) : (
-          tasks.map((task) => (
-            task.state_task != "4" && (
-              <TouchableOpacity style={styles.card} key={task.task.id_task}>
-                <Text style={styles.cardTitle}>{task.task.id_task} - perm {task.permission}</Text>
-                <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
-              </TouchableOpacity>
-            )
-          ))
+          tasks.map((task) => {
+            const deadlineMoment = moment(task.task.deadline_task);
+            if(deadlineMoment  < new Date() && task.task.state_task != "2"){
+              return (  
+                <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.late_card} key={task.task.id_task}>
+                  <Text style={styles.cardTitle}>{task.task.id_task}</Text>
+                  <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                </TouchableOpacity>
+              );
+            }else if (task.task.state_task == "1") {
+              return (
+                <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.card} key={task.task.id_task}>
+                  <Text style={styles.cardTitle}>{task.task.id_task}</Text>
+                  <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                </TouchableOpacity>
+              );
+            } else if (task.task.state_task == "2") {
+              return (
+                <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.done_card} key={task.task.id_task}>
+                  <Text style={styles.cardTitle}>{task.task.id_task}</Text>
+                  <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                </TouchableOpacity>
+              );
+            } else {
+              return null; // or any other component to render when the state is not 3 or 4
+            }
+          })
         )}
       </ScrollView>
       <TouchableOpacity onPress={() => setShowMenu(!showMenu)} style={styles.menuBtn}>
@@ -330,6 +360,24 @@ const styles = StyleSheet.create({
     height: 130,
     marginBottom: 15,
   },
+  done_card: {
+    backgroundColor: 'green',
+    width: '80%',
+    borderRadius: 10,
+    padding: 15,
+    marginTop: 15,
+    height: 130,
+    marginBottom: 15,
+  },
+  late_card: {
+    backgroundColor: 'red',
+    width: '80%',
+    borderRadius: 10,
+    padding: 15,
+    marginTop: 15,
+    height: 130,
+    marginBottom: 15,
+  },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -341,18 +389,6 @@ const styles = StyleSheet.create({
   errorMessage: {
     fontSize: 18,
     marginTop: 50,
-  },
-  menuBtnContainer: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: 'white',
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 3,
   },
   menuBtn: {
     position: 'absolute',
@@ -386,42 +422,6 @@ const styles = StyleSheet.create({
   menuItemText: {
     marginLeft: 10,
   },
-  menuBtnLeft: {
-    position: 'absolute',
-    bottom: 35,
-    left: 35,
-    backgroundColor: '#285e89',
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 3,
-  },
-  menuBtnTop: {
-    position: 'absolute',
-    top: 35,
-    right: 35,
-    backgroundColor: '#285e89',
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 3,
-  },
-  menuBtnTopLeft: {
-    position: 'absolute',
-    top: 35,
-    left: 35,
-    backgroundColor: '#285e89',
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 3,
-  },
   modal: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     position: 'absolute',
@@ -431,11 +431,6 @@ const styles = StyleSheet.create({
     right: 0,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
   },
   form: {
     backgroundColor: 'white',
