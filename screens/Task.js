@@ -94,7 +94,6 @@ export default function Task({ navigation }) {
         navigation.replace("Group", {grupo: route.params.group});
       }
     }catch (error){
-      console.log(1);
       console.log(error);
     }
   };
