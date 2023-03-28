@@ -4,6 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
 import axios from 'axios';
+import moment from 'moment';
 
 import { Ionicons } from '@expo/vector-icons';
 
@@ -19,6 +20,7 @@ export default function Task({ navigation }) {
   const [originaldescTask, setOriginalDescTask] = useState('');
   const [originaldeadline_task, setOriginalDeadline_Task] = useState('');
   const [deadlineTask, setDeadlineTask] = useState('');
+  const [date, setDate] = useState('');
 
   const handleGetToken = async () => {
     const dataToken = await AsyncStorage.getItem('token');
@@ -30,6 +32,7 @@ export default function Task({ navigation }) {
   };
 
   const handleChange = (value) => {
+    // only allow numbers and slashes
     const filteredValue = value.replace(/[^0-9/]/g, '');
     if (filteredValue.length <= 10) {
       let formattedValue = filteredValue;
@@ -39,7 +42,7 @@ export default function Task({ navigation }) {
       if (filteredValue.length > 5 && filteredValue[5] !== '/') {
         formattedValue = formattedValue.slice(0, 5) + '/' + formattedValue.slice(5);
       }
-      setDeadline_Task(formattedValue);
+      setDate(formattedValue);
       set_deadline_date(formattedValue);
     }
   };
@@ -94,7 +97,41 @@ export default function Task({ navigation }) {
         navigation.replace("Group", {grupo: route.params.group});
       }
     }catch (error){
-      console.log(1);
+      console.log(error);
+    }
+  };
+
+  const updateTaskInfo = async (Deadline_Task, Desc_Task) => {
+    const deadlineMoment = moment(deadlineTask);
+    if (!deadlineMoment.isValid()) {
+      alert('Select a valid date');
+      return;
+    }
+  
+    const deadline = deadlineMoment.toDate();
+    if (deadline < new Date()) {
+      alert('Select a future date');
+      return;
+    }
+  
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const response = await axios.post('http://hubo.pt:3001/update_task_info', 
+        {
+          id_task: route.params.id_task,
+          deadline_task: Deadline_Task,
+          desc_task: Desc_Task
+        }, 
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if(state_task != 4){
+        getTask();
+      }else{
+        navigation.replace("Group", {grupo: route.params.group});
+      }
+    }catch (error){
       console.log(error);
     }
   };
@@ -118,6 +155,7 @@ export default function Task({ navigation }) {
       const year = response.data.deadline_task.slice(0, 4);
       setDeadline_Task(day + "/" + month + "/" + year);
       setOriginalDeadline_Task(day + "/" + month + "/" + year);
+      setDate(day + "/" + month + "/" + year);
     }catch (error){
       console.log(error);
     }
@@ -161,7 +199,7 @@ export default function Task({ navigation }) {
           <TextInput value = {descTask} editable = {editable} placeholder="Task Description" onChangeText={val => setDescTask(val)}style={styles.input} />
           <TextInput
             style={styles.input}
-            value={deadline_task}
+            value={date}
             editable = {editable}
             onChangeText={handleChange}
             placeholder="Due date (dd/mm/yyyy)"
@@ -186,7 +224,7 @@ export default function Task({ navigation }) {
                   <Text style={styles.buttonText}>Set as Done</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => handleCreateTask()}
+                  onPress={() => updateTaskInfo(deadlineTask, descTask)}
                   style={[styles.button, styles.submitButton]}
                   >
                   <Text style={styles.buttonText}>Save</Text>
