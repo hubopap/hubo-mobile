@@ -195,7 +195,7 @@ export default function Task({ navigation }) {
             ) : perm == "2" ? (
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
-                  onPress={() => handleCreateTask()}
+                  onPress={() => updateTaskState(2)}
                   style={[styles.button, styles.submitButton]}
                   >
                   <Text style={styles.buttonText}>Set as Done</Text>

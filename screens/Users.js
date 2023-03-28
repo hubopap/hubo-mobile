@@ -134,7 +134,6 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   searchInput: {
-    flex: 1,
     height: 40,
     margin: 10,
     paddingHorizontal: 10,

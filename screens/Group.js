@@ -175,7 +175,7 @@ export default function Group({ navigation }) {
   useEffect(() => {
     getTasks();
     getGroupUsers();
-  }, []);
+  }, [groupUsers]);
 
   const handleUsersPress = () => {
     navigation.navigate('AddUsers', {group:route.params.grupo, id_group: route.params.grupo.id_group});

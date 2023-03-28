@@ -10,8 +10,14 @@ axios.defaults.withCredentials = true;
 export default class Login extends React.Component{
 
     state = {
-      username: '', password: ''
+      username: '',showPassword: false, password: ''
     }
+
+  togglePasswordVisibility = () => {
+    this.setState(prevState => ({
+      showPassword: !prevState.showPassword
+    }));
+  }
 
   onChangeText = (key, val) => {
     this.setState({ [key]: val })
@@ -52,14 +58,22 @@ export default class Login extends React.Component{
           placeholderTextColor='white'
           onChangeText={val => this.onChangeText('username', val)}
         />
+        
+      <View style={styles.passwordInputContainer}>
         <TextInput
-          style={styles.input}
+          style={styles.passwordInput}
           placeholder='Password'
-          secureTextEntry={true}
+          secureTextEntry={!this.state.showPassword}
           autoCapitalize="none"
           placeholderTextColor='white'
           onChangeText={val => this.onChangeText('password', val)}
         />
+        <TouchableOpacity onPress={this.togglePasswordVisibility}>
+          <Text style={styles.showHidePassword}>
+            {this.state.showPassword ? 'Hide' : 'Show'}
+          </Text>
+        </TouchableOpacity>
+      </View>
         <TouchableOpacity onPress={() =>  {this.loginUser()}}>
             <Text style={styles.login}>Login</Text>
         </TouchableOpacity>
@@ -75,6 +89,31 @@ export default class Login extends React.Component{
 const styles = StyleSheet.create({
   question: {
     top: 20
+  },
+  passwordInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+    width: '65%',
+    height: 40,
+    backgroundColor: '#285e89',
+    margin: 10,
+    padding: 8,
+    color: 'white',
+    borderRadius: 15,
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  passwordInput: {
+    flex: 1,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  showHidePassword: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 15,
+    marginLeft: 5,
   },
   input: {
     marginTop: 10,
