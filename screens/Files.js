@@ -1,55 +1,70 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Button, Text, StyleSheet } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useRoute } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const instance = axios.create();
+  
+// add a request interceptor
+instance.interceptors.request.use(
+    async (config) => {
+        const token = await AsyncStorage.getItem('token'); // get the token from local storage
+        if (token) {
+            config.headers.authorization = `Bearer ${token}`; // set the authorization header
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
 
 const Files = ({ navigation }) => {
-    const route = useRoute();
+  const route = useRoute();
+  const [fileUri, setFileUri] = useState(null);
 
-    const handleFileUpload = async () => {
-        try {
-          const result = await DocumentPicker.getDocumentAsync();
-          if (result.type === 'success') {
-            const file = result.uri;
-            const formData = new FormData();
-            formData.append('file', {
-              uri: file,
-              name: 'file'
-            });
-            const id_group = route.params.group.id_group;
-            const config = {
-              headers: {
-                Authorization: `Bearer ${await AsyncStorage.getItem('token')}`,
-                'Content-Type': 'multipart/form-data',
-              },
-              params: {
-                id_group,
-              },
-            };
-            const response = await axios.post(
-              'http://localhost:3001/upload_file',
-              formData,
-              config
-            );
-            console.log(response.data);
-          }
-        } catch (error) {
-          console.error(error);
+  const handleFilePick = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync();
+      setFileUri(result.uri);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleUpload = async () => {
+    try {
+      const formData = new FormData();
+      const fileParts = fileUri.split('/');
+      const fileName = fileParts[fileParts.length - 1];
+      formData.append('file', {
+        uri: fileUri,
+        name: fileName,
+        type: 'multipart/form-data',
+      });
+      const response = await instance.post(
+        `http://hubo.pt:3001/upload_file?id_group=${route.params.group.id_group}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         }
-      };
+      );
+      alert(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-      return(
-        <View style={styles.container}>
-
-        <TouchableOpacity onPress={handleFileUpload}>
-            <Text>Upload File</Text>
-        </TouchableOpacity>
-        </View>
-
-      )
-}
+  return (
+    <View style={styles.container}>
+      <Button title="Pick a file" onPress={handleFilePick} />
+      {fileUri && <Text>Selected file: {fileUri}</Text>}
+      <Button title="Upload" onPress={handleUpload} disabled={!fileUri} />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
     container: {
