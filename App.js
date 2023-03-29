@@ -5,6 +5,7 @@ import Groups from "./screens/Groups";
 import Users from "./screens/Users";
 import Group from "./screens/Group";
 import User from "./screens/User";
+import Files from "./screens/Files";
 import Task from "./screens/Task";
 import AddUsers from "./screens/AddUsers";
 import { NavigationContainer, NavigationRouteContext } from "@react-navigation/native";
@@ -59,6 +60,11 @@ export default function App(){
       <Stack.Screen
         name="Task"
         component={Task}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Files"
+        component={Files}
         options={{headerShown: false}}
       />
       </Stack.Navigator>

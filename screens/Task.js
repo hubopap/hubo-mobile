@@ -126,11 +126,7 @@ export default function Task({ navigation }) {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      if(state_task != 4){
-        getTask();
-      }else{
-        navigation.replace("Group", {grupo: route.params.group});
-      }
+      navigation.replace("Group", {grupo: route.params.group});
     }catch (error){
       console.log(error);
     }
@@ -142,13 +138,13 @@ export default function Task({ navigation }) {
       const response = await axios.post('http://hubo.pt:3001/task_info', {id_task: route.params.id_task}, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      setStateTask(response.data.state_task);
       setPerm(route.params.perm_task);
-      if(perm == "3") {
+      if(perm == "3" && stateTask != "2") {
         setEditable(true);
       }
       setTaskData(response.data);
       setDescTask(response.data.desc_task);
-      setStateTask(response.data.state_task);
       setOriginalDescTask(response.data.desc_task);
       const day = response.data.deadline_task.slice(8,10);
       const month = response.data.deadline_task.slice(5,7);
@@ -176,76 +172,75 @@ export default function Task({ navigation }) {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>{route.params.id_task}</Text>
-        <View style={{flexDirection: 'row'}}>
-          {
-            perm == "3" ? (
-              <TouchableOpacity onPress={() => {updateTaskState(4)}} style={styles.deleteBtn}>
-                <Ionicons name="trash-outline" size={24} color="white" />
-              </TouchableOpacity>
-            ) : (
-              <></>
-            )
-          }
-          <TouchableOpacity onPress={() => {getTask()}} style={[styles.refreshBtn, {marginLeft: 10}]}>
-            <Ionicons name="refresh-outline" size={24} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => {handleProfilePress()}} style={styles.profileBtn}>
-            <Ionicons name="md-person" size={24} color="white" />
-          </TouchableOpacity>
+          <View style={{flexDirection: 'row'}}>
+            {
+              perm == "3" ? (
+                <TouchableOpacity onPress={() => {updateTaskState(4)}} style={styles.deleteBtn}>
+                  <Ionicons name="trash-outline" size={24} color="white" />
+                </TouchableOpacity>
+              ) : (
+                <></>
+              )
+            }
+          </View>
         </View>
-      </View>
-      {taskData && (
-        <View style={styles.taskcontainer}>
-          <TextInput value = {descTask} editable = {editable} placeholder="Task Description" onChangeText={val => setDescTask(val)}style={styles.input} />
-          <TextInput
-            style={styles.input}
-            value={date}
-            editable = {editable}
-            onChangeText={handleChange}
-            placeholder="Due date (dd/mm/yyyy)"
-            maxLength={10}
-            keyboardType="numeric"
-          />
-          {
-            stateTask == "2" ? (
-              <></>
-            ) : perm == "3" ? (
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  onPress={() => cancel()}
-                  style={[styles.button, styles.cancelButton]}
+        {taskData && (
+          <View style={styles.taskcontainer}>
+            <TextInput 
+              value = {descTask} 
+              editable = {editable} 
+              placeholder="Task Description" 
+              onChangeText={val => setDescTask(val)}style={styles.input} 
+            />
+            <TextInput
+              style={styles.input}
+              value={date}
+              editable = {editable}
+              onChangeText={handleChange}
+              placeholder="Due date (dd/mm/yyyy)"
+              maxLength={10}
+              keyboardType="numeric"
+            />
+            {
+              stateTask == "2" ? (
+                <></>
+              ) : perm == "3" ? (
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    onPress={() => cancel()}
+                    style={[styles.button, styles.cancelButton]}
                   >
-                  <Text style={styles.buttonText}>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => updateTaskState(2)}
-                  style={[styles.button, styles.submitButton]}
+                    <Text style={styles.buttonText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => updateTaskState(2)}
+                    style={[styles.button, styles.submitButton]}
                   >
-                  <Text style={styles.buttonText}>Set as Done</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => updateTaskInfo(deadlineTask, descTask)}
-                  style={[styles.button, styles.submitButton]}
+                    <Text style={styles.buttonText}>Set as Done</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => updateTaskInfo(deadlineTask, descTask)}
+                    style={[styles.button, styles.submitButton]}
                   >
-                  <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
-              </View>
-            ) : perm == "2" ? (
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  onPress={() => updateTaskState(2)}
-                  style={[styles.button, styles.submitButton]}
+                    <Text style={styles.buttonText}>Save</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : perm == "2" ? (
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    onPress={() => updateTaskState(2)}
+                    style={[styles.button, styles.submitButton]}
                   >
-                  <Text style={styles.buttonText}>Set as Done</Text>
-                </TouchableOpacity>
-              </View>
-            ) : null
-          }
+                    <Text style={styles.buttonText}>Set as Done</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : null
+            }
           </View>
-          )}
-          </View>
-          );
-        }
+        )}
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -288,16 +283,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
     padding: 3,
     paddingBottom: 4,
-    borderRadius: 5,
-    backgroundColor: 'red',
-  },
-  refreshBtn: {
-    marginTop: 8,
-    padding: 3,
-    paddingBottom: 4,
     marginRight: 10,
     borderRadius: 5,
-    backgroundColor: '#204b6e',
+    backgroundColor: 'red',
   },
   input: {
     borderWidth: 1,

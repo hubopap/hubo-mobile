@@ -177,6 +177,10 @@ export default function Group({ navigation }) {
     getGroupUsers();
   }, [groupUsers]);
 
+  const handleFilesPress = () => {
+    navigation.navigate('Files', {group:route.params.grupo});
+  }
+
   const handleUsersPress = () => {
     navigation.navigate('AddUsers', {group:route.params.grupo, id_group: route.params.grupo.id_group});
   }
@@ -243,8 +247,12 @@ export default function Group({ navigation }) {
             <Ionicons name="add-outline" size={24} color="black" />
             <Text style={styles.menuItemText}>Create Tasks</Text>
           </TouchableOpacity>
+          <TouchableOpacity  onPress={() => handleFilesPress()} style={[styles.menuItem, styles.top]}>
+            <Ionicons name="folder-outline" size={24} color="black" />
+            <Text style={styles.menuItemText}>Group Files</Text>
+          </TouchableOpacity>
           <TouchableOpacity  onPress={() => handleUsersPress()} style={[styles.menuItem, styles.top]}>
-            <Ionicons name="md-people" size={24} color="black" />
+            <Ionicons name="md-people-outline" size={24} color="black" />
             <Text style={styles.menuItemText}>Add User</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={handleLogout} style={[styles.menuItem, styles.left]}>
