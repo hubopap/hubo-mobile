@@ -247,10 +247,10 @@ export default function Group({ navigation }) {
             <Ionicons name="add-outline" size={24} color="black" />
             <Text style={styles.menuItemText}>Create Tasks</Text>
           </TouchableOpacity>
-          <TouchableOpacity  onPress={() => handleFilesPress()} style={[styles.menuItem, styles.top]}>
+          {/* <TouchableOpacity  onPress={() => handleFilesPress()} style={[styles.menuItem, styles.top]}>
             <Ionicons name="folder-outline" size={24} color="black" />
             <Text style={styles.menuItemText}>Group Files</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity  onPress={() => handleUsersPress()} style={[styles.menuItem, styles.top]}>
             <Ionicons name="md-people-outline" size={24} color="black" />
             <Text style={styles.menuItemText}>Add User</Text>
