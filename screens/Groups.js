@@ -15,11 +15,13 @@ export default function Groups({ navigation }) {
   const [name_group, setNameGroup] = useState('');
   const [desc_group, setDescGroup] = useState('');
 
+  //Funcão responsável por eliminar o token
   const handleLogout = async () => {
     await AsyncStorage.removeItem('token');
     navigation.replace('Login');
   };
 
+  //Funcão responsável por ir buscar o token
   const handleGetToken = async () => {
     const dataToken = await AsyncStorage.getItem('token');
     if (!dataToken) {
@@ -29,6 +31,7 @@ export default function Groups({ navigation }) {
     }
   };
 
+  //Função responsável por ir buscar todos os grupos
   const getGroups = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -48,10 +51,12 @@ export default function Groups({ navigation }) {
     }
   };
 
+  //Função responsável por mostrar o form de criação de grupos
   const handleCreateGroupForm = () => {
     setShowForm(true);
   };
 
+  //Funcão responsável por verificar a sessão do utilizador
   const isLoggedIn = async () => {
     const token = await handleGetToken();
     try {
@@ -72,26 +77,32 @@ export default function Groups({ navigation }) {
     }
   }
 
+  //Funcão responsável pelas verificações e criação de grupos
   const handleCreateGroup = async () => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      await axios.post('http://hubo.pt:3001/create_group', {
-        name_group: name_group,
-        desc_group: desc_group
-      }, 
-      {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      getGroups();
-      setShowForm(false);
-    } catch (error) {
-      console.log(error);
+    if(!name_group || !desc_group){
+      alert("Fill all the fields");
+    }else{
+      try {
+        const token = await AsyncStorage.getItem('token');
+        await axios.post('http://hubo.pt:3001/create_group', {
+          name_group: name_group,
+          desc_group: desc_group
+        }, 
+        {
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        getGroups();
+        setShowForm(false);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
+  //Funcão realizada antes de renderizar por parte do React
   useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
       if (navigation.isFocused()) {
@@ -102,14 +113,17 @@ export default function Groups({ navigation }) {
     getGroups();
   }, [navigation]);
 
+  //Funcão realizada quando se pressiona o card de um grupo
   const handleGroupPress = (group) => {
     navigation.navigate('Group', { grupo: group });
   }
 
+  //Funcão realizada quando se pressiona a opção "Users" do menu
   const handleUsersPress = () => {
     navigation.navigate('Users');
   }
 
+  //Funcão realizada quando se pressiona o símbolo de perfil
   const handleProfilePress = async () => {
     const response = await isLoggedIn();
     console.log(response);
@@ -117,7 +131,7 @@ export default function Groups({ navigation }) {
       navigation.navigate('User', { user: response.data.user });
     }
   }
-
+//Return da página, sendo o header o cabeçalho e o container, a "caixa" que contém toda a página. Tendo verificações que mostram ou não os formulários.
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -188,6 +202,7 @@ export default function Groups({ navigation }) {
   );
 }
 
+//Declaração dos estilos
 const styles = StyleSheet.create({
   container: {
     flex: 1,

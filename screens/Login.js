@@ -13,6 +13,7 @@ export default class Login extends React.Component{
       username: '',showPassword: false, password: ''
     }
 
+  //função que altera a visibilidade da password
   togglePasswordVisibility = () => {
     this.setState(prevState => ({
       showPassword: !prevState.showPassword
@@ -23,6 +24,7 @@ export default class Login extends React.Component{
     this.setState({ [key]: val })
   }
 
+  //função que dá login
   loginUser() {
     axios.post("http://hubo.pt:3001/login", {
       method: "post",
@@ -34,15 +36,17 @@ export default class Login extends React.Component{
           AsyncStorage.setItem("token", res.data.token)
           .then(() => {
             this.props.navigation.replace("Groups");
-          })
-          .catch((error) => {
-            console.error(error); // or do something else with the error
+          }).catch((error) => {
+            console.error(error);
           });
         }
       }
+    }).catch((error) => {
+      alert("Something went wrong! Check your credentials")
     });
   }
 
+  //render do conteúdo da página (botões e também o logo, bem como as textboxes)
   render(){
     return(
       <View style={styles.container}>
@@ -86,6 +90,7 @@ export default class Login extends React.Component{
   
 }
 
+//Declaração dos estilos
 const styles = StyleSheet.create({
   question: {
     top: 20

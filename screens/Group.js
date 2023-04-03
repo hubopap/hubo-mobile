@@ -23,6 +23,8 @@ export default function Group({ navigation }) {
   const [groupUsers, setGroupUsers] = useState([]);
   const [date, setDate] = useState('');
 
+  
+  //Funcão responsável por mostrar a data no formato pretendido
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = date.getUTCDate().toString().padStart(2, '0');
@@ -31,8 +33,8 @@ export default function Group({ navigation }) {
     return `${day}/${month}/${year}`;
   }
 
+  //Funcão responsável por mostrar a data no formato pretendido
   const handleChange = (value) => {
-    // only allow numbers and slashes
     const filteredValue = value.replace(/[^0-9/]/g, '');
     if (filteredValue.length <= 10) {
       let formattedValue = filteredValue;
@@ -47,11 +49,13 @@ export default function Group({ navigation }) {
     }
   };
  
+  //Funcão responsável por eliminar o token
   const handleLogout = async () => {
     await AsyncStorage.removeItem('token');
     navigation.replace('Login');
   };
 
+  //Funcão responsável por ir buscar o token
   const handleGetToken = async () => {
     const dataToken = await AsyncStorage.getItem('token');
     if (!dataToken) {
@@ -61,6 +65,7 @@ export default function Group({ navigation }) {
     }
   };
 
+  //Funcão responsável por ir buscar todos os utilizadores do grupo
   const getGroupUsers = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -81,6 +86,7 @@ export default function Group({ navigation }) {
     }
   };
 
+  //Funcão responsável por ir buscar todas as tarefas
   const getTasks = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -106,6 +112,7 @@ export default function Group({ navigation }) {
     setShowForm(true);
   };
 
+  //Funcão responsável por verificar a sessão do utilizador
   const isLoggedIn = async () => {
     const token = await handleGetToken();
     try {
@@ -126,15 +133,18 @@ export default function Group({ navigation }) {
   }
 
 
+  //Funcão responsável por fechar o formulário de criação de Tarefa
   const cancel = async () => {
     setShowForm(false);
     setDate('');
   }
 
+  //Funcão responsável por chamar a página relativa à tarefa selecionada
   const goToTask = async (id_task, perm_task) => {
     navigation.navigate("Task", {id_task: id_task, perm_task: perm_task, group: route.params.grupo});
   }
 
+  //Funcão responsável por alterar o formato da data para o pretendido na base de dados
   const set_deadline_date = async (date) => {
     const day = date.slice(0,2);
     const month = date.slice(3,5);
@@ -143,6 +153,7 @@ export default function Group({ navigation }) {
     setDeadlineTask(dateFormat);
   };
 
+  //Funcão responsável por fazer as verificações e criar a tarefa
   const handleCreateTask = async () => {
     const deadlineMoment = moment(deadlineTask);
     if (!deadlineMoment.isValid()) {
@@ -191,19 +202,23 @@ export default function Group({ navigation }) {
 
   };
 
+  //Funcão realizada antes de renderizar por parte do React
   useEffect(() => {
     getTasks();
     getGroupUsers();
   }, [groupUsers]);
 
+  //Funcão responsável por chamar a página de Ficheiros do grupo
   const handleFilesPress = () => {
     navigation.navigate('Files', {group:route.params.grupo});
   }
 
+  //Funcão responsável por chamar a página de Adicionar utilizadores
   const handleUsersPress = () => {
     navigation.navigate('AddUsers', {group:route.params.grupo, id_group: route.params.grupo.id_group});
   }
 
+  //Funcão responsável por chamar a página de perfil
   const handleProfilePress = async () => {
     const response = await isLoggedIn();
     if (response && response.data && response.data.loggedIn) {
@@ -211,6 +226,7 @@ export default function Group({ navigation }) {
     }
   }
 
+  //Return da página, sendo o header o cabeçalho e o container, a "caixa" que contém toda a página. As verificações de estado para que as tarefas mostradas estejam de acordo com o Picker/Select Box
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -405,6 +421,7 @@ export default function Group({ navigation }) {
   );
 }
 
+//Declaração dos estilos
 const styles = StyleSheet.create({
   container: {
     flex: 1,

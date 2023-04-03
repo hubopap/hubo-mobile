@@ -12,12 +12,13 @@ export default function User({navigation}){
   const [bio, setBio] = useState('');
   const [editable, setEditable] = useState(false);
   
-
+  //Funcão responsável por eliminar o token
   const handleLogout = async () => {
     await AsyncStorage.removeItem('token');
     navigation.replace('Login');
   };
 
+  //Função para o formato correto da data
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = date.getUTCDate().toString().padStart(2, '0');
@@ -26,6 +27,7 @@ export default function User({navigation}){
     return `${day}-${month}-${year}`;
   }
 
+  //Funcão responsável por verificar a sessão do utilizador
   const isLoggedIn = async () => {
     const token = await handleGetToken();
     try {
@@ -45,6 +47,7 @@ export default function User({navigation}){
     }
   }
 
+  //Funcão responsável por ir buscar o token
   const handleGetToken = async () => {
     const dataToken = await AsyncStorage.getItem('token');
     if (!dataToken) {
@@ -54,6 +57,7 @@ export default function User({navigation}){
     }
   };
 
+  //Funcão responsável por chamar a página de perfil
   const handleProfilePress = async () => {
     const response = await isLoggedIn();
     if (response && response.data && response.data.loggedIn) {
@@ -61,6 +65,7 @@ export default function User({navigation}){
     }
   }
 
+  //Funcão responsável por ir buscar os dados do utilizador
   const getUserDetails = async (user_query) => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -72,7 +77,7 @@ export default function User({navigation}){
           'Content-Type': 'application/json'
         }
       });
-      return response.data; // return the response data
+      return response.data;
 
     } catch (error) {
       console.log(error);
@@ -80,6 +85,7 @@ export default function User({navigation}){
   };
 
   
+  //Funcão responsável por editar a biografia
   const handleUpdateBio = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -99,6 +105,7 @@ export default function User({navigation}){
     }
   };
 
+  //Funcão responsável por ir buscar os detalhes do utilizador
   const fetchData = async () => {
     const user_query = route.params.user.id_user;
     const user_aux = await getUserDetails(user_query);
@@ -112,11 +119,13 @@ export default function User({navigation}){
     setEditable(user_aux.editable);
   };
 
+  //Funcão realizada antes de renderizar por parte do React
   useEffect(() => {
     fetchData();
   }, []);
 
-  return(
+//Return da página, sendo o header o cabeçalho e o container, a "caixa" que contém toda a página. Dentro, as textboxes, editaveis ou nao tendo em conta a permissao.
+return(
     <View>
       <View style={styles.header}>
         <Text style={styles.title}>{user?.user?.username}</Text>
@@ -193,6 +202,7 @@ export default function User({navigation}){
   );
 }
 
+//Declaração dos estilos
 const styles = StyleSheet.create({
   container: {
     paddingTop: 20,

@@ -10,11 +10,13 @@ export default function Users({ navigation }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
+  //Função que redireciona para o perfil dos utilizadores
   const handleUsersPress = (user) => {
     console.log(user);
     navigation.navigate('User', { user: user });
   }
 
+  //Função que vai buscar os utilizadores
   const getUsers = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -30,10 +32,13 @@ export default function Users({ navigation }) {
     }
   };
 
+  
+  //Funcão realizada antes de renderizar por parte do React
   useEffect(() => {
     getUsers();
   }, []);
 
+  //render dos componentes da página, header e container, com searchbox funcional
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -72,6 +77,7 @@ export default function Users({ navigation }) {
   )
 }
 
+//Declaração dos estilos
 const styles = StyleSheet.create({
   container: {
     flex: 1,

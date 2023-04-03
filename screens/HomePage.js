@@ -9,6 +9,7 @@ export default function HomePage() {
   const [tokenInfo, setTokenInfo] = useState(null);
   const navigation = useNavigation();
 
+  //Funcão responsável por ir buscar o token
   const handleGetToken = async () => {
     const dataToken = await AsyncStorage.getItem('token');
     if (!dataToken) {
@@ -18,6 +19,7 @@ export default function HomePage() {
     }
   };
 
+  //Funcão responsável por verificar a sessão do utilizador
   const isLoggedIn = async () => {
     const token = await handleGetToken();   
     console.log(token);
@@ -40,6 +42,7 @@ export default function HomePage() {
     });
   }
 
+  //Funcão realizada antes de renderizar por parte do React
   useEffect(() => {
     const checkToken = async () => {
       const islogged = await isLoggedIn();
@@ -54,6 +57,7 @@ export default function HomePage() {
     checkToken();
   }, [navigation]);
 
+  //return só com logo e botão de get started
   return (
     <View style={styles.container}>
       <Image source={require('../assets/hubo_body.png')} style={styles.logo} resizeMode="contain" />
@@ -65,6 +69,7 @@ export default function HomePage() {
   );
 }
 
+//Declaração dos estilos
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',

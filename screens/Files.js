@@ -9,12 +9,11 @@ import { Ionicons } from '@expo/vector-icons';
 
 const instance = axios.create();
   
-// add a request interceptor
 instance.interceptors.request.use(
     async (config) => {
-        const token = await AsyncStorage.getItem('token'); // get the token from local storage
+        const token = await AsyncStorage.getItem('token');
         if (token) {
-            config.headers.authorization = `Bearer ${token}`; // set the authorization header
+            config.headers.authorization = `Bearer ${token}`;
         }
         return config;
     },
@@ -38,6 +37,7 @@ const Files = ({ navigation }) => {
     }
   };
 
+  //Funcão responsável por verificar a sessão do utilizador
   const isLoggedIn = async () => {
     const token = await handleGetToken();
     try {
@@ -57,6 +57,7 @@ const Files = ({ navigation }) => {
     }
   }
 
+  //Função responsável por ir buscar o ficheiro a adicionar ao telemóvel
   const handleFilePick = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync();
@@ -67,6 +68,7 @@ const Files = ({ navigation }) => {
     }
   };
 
+  //Função responsável por listar os ficheiros relativos ao grupo
   const getFiles = async () => {
       const response = await instance.post('http://hubo.pt:3001/files_list', {
         id_group: route.params.group.id_group
@@ -76,6 +78,7 @@ const Files = ({ navigation }) => {
       }
   }
 
+  //Função responsável por dar upload a ficheiros
   const handleUpload = async () => {
     try {
       const formData = new FormData();
@@ -103,13 +106,7 @@ const Files = ({ navigation }) => {
     }
   };
 
-  const handleProfilePress = async () => {
-    const response = await isLoggedIn();
-    if (response && response.data && response.data.loggedIn) {
-      navigation.navigate('User', { user: response.data.user });
-    }
-  }
-
+  //Função que abre o link de download de um ficheiro
   const handleDownload = async (file) => {
     await Linking.canOpenURL(`http://hubo.pt:3001/download_file?id_group=${active_group}&file_name=${file}`).then(supported => {
         if (supported) {
@@ -120,8 +117,8 @@ const Files = ({ navigation }) => {
     });
   } 
 
+  //Função que envia o pedido para remoção de um certo ficheiro 
   const handleDelete = async (file) => {
-    let answer = false;
     Alert.alert(
       'Delete File',
       'Are you sure you want to delete this file? This can\'t be undone',
@@ -154,10 +151,12 @@ const Files = ({ navigation }) => {
     
   } 
 
+  //Funcão realizada antes de renderizar por parte do React
   useEffect(() => {
     getFiles();
   }, []);
 
+  //Return da página, sendo o header o cabeçalho e o container, a "caixa" que contém toda a página. 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -196,6 +195,7 @@ const Files = ({ navigation }) => {
   );
 };
 
+//Declaração dos estilos
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -22,6 +22,7 @@ export default function Task({ navigation }) {
   const [deadlineTask, setDeadlineTask] = useState('');
   const [date, setDate] = useState('');
 
+  //Funcão responsável por ir buscar o token
   const handleGetToken = async () => {
     const dataToken = await AsyncStorage.getItem('token');
     if (!dataToken) {
@@ -32,7 +33,6 @@ export default function Task({ navigation }) {
   };
 
   const handleChange = (value) => {
-    // only allow numbers and slashes
     const filteredValue = value.replace(/[^0-9/]/g, '');
     if (filteredValue.length <= 10) {
       let formattedValue = filteredValue;
@@ -47,6 +47,7 @@ export default function Task({ navigation }) {
     }
   };
 
+  //Funcão responsável por verificar a sessão do utilizador
   const isLoggedIn = async () => {
     const token = await handleGetToken();
     try {
@@ -66,6 +67,7 @@ export default function Task({ navigation }) {
     }
   }
 
+  //Funcão para colocar a data para o formato desejado na base de dados
   const set_deadline_date = async (date) => {
     const day = date.slice(0,2);
     const month = date.slice(3,5);
@@ -74,11 +76,13 @@ export default function Task({ navigation }) {
     setDeadlineTask(dateFormat);
   };
 
+  //Funcão para cancelar as alterações
   const cancel = () => {
     setDeadline_Task(originaldeadline_task);
     setDescTask(originaldescTask);
   }
 
+  //Funcão para alterar os dados da tarefa
   const updateTaskState = async (state_task) => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -101,6 +105,7 @@ export default function Task({ navigation }) {
     }
   };
 
+  //Funcão que muda os dados da tarefa
   const updateTaskInfo = async (Deadline_Task, Desc_Task) => {
     const deadlineMoment = moment(deadlineTask);
     if (!deadlineMoment.isValid()) {
@@ -132,6 +137,7 @@ export default function Task({ navigation }) {
     }
   };
 
+  //Funcão que vai buscar os dados da tarefa
   const getTask = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -157,17 +163,12 @@ export default function Task({ navigation }) {
     }
   };
 
-  const handleProfilePress = async () => {
-    const response = await isLoggedIn();
-    if (response && response.data && response.data.loggedIn) {
-      navigation.navigate('User', { user: response.data.user });
-    }
-  }
-
+  //Funcão realizada antes de renderizar por parte do React
   useEffect(() => {
     getTask();
   }, [perm]);
 
+//Return da página, sendo o header o cabeçalho e o container, a "caixa" que contém toda a página. Dentro, as textboxes, editaveis ou nao tendo em conta a permissao.
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -242,6 +243,7 @@ export default function Task({ navigation }) {
   );
 }
 
+//Declaração dos estilos
 const styles = StyleSheet.create({
   container: {
     flex: 1,

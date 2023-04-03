@@ -12,11 +12,7 @@ export default function AddUsers({ navigation }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const handleUsersPress = (user) => {
-    console.log(user);
-    navigation.navigate('User', { user: user });
-  }
-
+  //Função para adicionar outros utilizadores ao grupo
   const AddUserToGroup = async (id_user) => {
     console.log(id_user);
     console.log(route.params.id_group);
@@ -41,6 +37,7 @@ export default function AddUsers({ navigation }) {
     navigation.goBack();
   }
 
+  //Função que vai buscar todos os utilizadores não pertencentes ao grupo
   const getUsers = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -62,10 +59,12 @@ export default function AddUsers({ navigation }) {
     }
   };
 
+  //Funcão realizada antes de renderizar por parte do React
   useEffect(() => {
     getUsers();
   }, []);
 
+  //Return da página, sendo o header o cabeçalho e o container, a "caixa" que contém toda a página
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -107,7 +106,7 @@ export default function AddUsers({ navigation }) {
   )
 }
 
-
+//Declaração dos estilos
 const styles = StyleSheet.create({
   container: {
     flex: 1,
