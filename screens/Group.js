@@ -16,11 +16,20 @@ export default function Group({ navigation }) {
   const [selectedUserPerm, setSelectedUserPerm] = useState('');
   const [descTask, setDescTask] = useState('');
   const [deadlineTask, setDeadlineTask] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState("0");
   const [user, setUser] = useState([]);
   const [showMenu, setShowMenu] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [groupUsers, setGroupUsers] = useState([]);
   const [date, setDate] = useState('');
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear().toString();
+    return `${day}/${month}/${year}`;
+  }
 
   const handleChange = (value) => {
     // only allow numbers and slashes
@@ -147,29 +156,39 @@ export default function Group({ navigation }) {
       return;
     }
   
-    try {
-      const token = await AsyncStorage.getItem('token');
-      await axios.post(
-        'http://hubo.pt:3001/create_task',
-        {
-          assigned_user: assignedUser,
-          assigned_user_perm: selectedUserPerm,
-          id_group: route.params.grupo.id_group,
-          desc_task: descTask,
-          deadline_task: deadline,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+    if(assignedUser && selectedUserPerm && route.params.grupo.id_group && descTask && deadline){
+      try {
+        const token = await AsyncStorage.getItem('token');
+        await axios.post(
+          'http://hubo.pt:3001/create_task',
+          {
+            assigned_user: assignedUser,
+            assigned_user_perm: selectedUserPerm,
+            id_group: route.params.grupo.id_group,
+            desc_task: descTask,
+            deadline_task: deadline,
           },
-        }
-      );
-      getTasks();
-      setShowForm(false);
-    } catch (error) {
-      console.log(error);
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        setAssignedUser();
+        setSelectedUserPerm();
+        setDescTask();
+        setDeadlineTask();
+        setDate();
+        getTasks();
+        setShowForm(false);
+      } catch (error) {
+        console.log(error);
+      }
+    }else{
+      alert("You must fill all the fields!");
     }
+
   };
 
   useEffect(() => {
@@ -204,39 +223,110 @@ export default function Group({ navigation }) {
             <Ionicons name="md-person" size={24} color="white" />
           </TouchableOpacity>
         </View>
-      </View>   
+      </View>
+      <Picker
+        selectedValue={selectedFilter}
+        onValueChange={(itemValue) => setSelectedFilter(itemValue)}
+      >
+        <Picker.Item label="All" value="0" />
+        <Picker.Item label="Completed Tasks" value="2"/>
+        <Picker.Item label="Uncomplete Tasks" value="1"/>
+        <Picker.Item label="Delayed Tasks" value="3"/>
+      </Picker>   
       <ScrollView contentContainerStyle={styles.scrollcontainer}>
-        {errorMessage ? (
-          <Text style={styles.errorMessage}>{errorMessage}</Text>
-        ) : (
-          tasks.map((task) => {
-            const deadlineMoment = moment(task.task.deadline_task);
-            if(deadlineMoment  < new Date() && task.task.state_task != "2"){
-              return (  
-                <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.late_card} key={task.task.id_task}>
-                  <Text style={styles.cardTitle}>{task.task.id_task}</Text>
-                  <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
-                </TouchableOpacity>
-              );
-            }else if (task.task.state_task == "1") {
-              return (
-                <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.card} key={task.task.id_task}>
-                  <Text style={styles.cardTitle}>{task.task.id_task}</Text>
-                  <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
-                </TouchableOpacity>
-              );
-            } else if (task.task.state_task == "2") {
-              return (
-                <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.done_card} key={task.task.id_task}>
-                  <Text style={styles.cardTitle}>{task.task.id_task}</Text>
-                  <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
-                </TouchableOpacity>
-              );
-            } else {
-              return null; // or any other component to render when the state is not 3 or 4
-            }
-          })
-        )}
+        {
+          errorMessage ? (
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+          ) : selectedFilter == "0" && (
+            tasks.map((task) => {
+              const deadlineMoment = moment(task.task.deadline_task);
+              if(deadlineMoment  < new Date() && task.task.state_task != "2"){
+                return (  
+                  <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.late_card} key={task.task.id_task}>
+                    <Text style={styles.cardTitle}>Due: {formatDate(task.task.deadline_task)}</Text>
+                    <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                  </TouchableOpacity>
+                );
+              }else if (task.task.state_task == "1") {
+                return (
+                  <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.card} key={task.task.id_task}>
+                    <Text style={styles.cardTitle}>Due: {formatDate(task.task.deadline_task)}</Text>
+                    <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                  </TouchableOpacity>
+                );
+              } else if (task.task.state_task == "2") {
+                return (
+                  <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.done_card} key={task.task.id_task}>
+                    <Text style={styles.cardTitle}>Due: {formatDate(task.task.deadline_task)}</Text>
+                    <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                  </TouchableOpacity>
+                );
+              } else {
+                return null;
+              }
+            })
+          )
+        }
+        {
+          errorMessage ? (
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+          ) : selectedFilter == "1" && (
+            tasks.map((task) => {
+              const deadlineMoment = moment(task.task.deadline_task);
+              if(deadlineMoment  < new Date() && task.task.state_task != "2"){
+                return (  
+                  <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.late_card} key={task.task.id_task}>
+                    <Text style={styles.cardTitle}>Due: {formatDate(task.task.deadline_task)}</Text>
+                    <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                  </TouchableOpacity>
+                );
+              }else if (task.task.state_task == "1") {
+                return (
+                  <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.card} key={task.task.id_task}>
+                    <Text style={styles.cardTitle}>Due: {formatDate(task.task.deadline_task)}</Text>
+                    <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                  </TouchableOpacity>
+                );
+              } else {
+                return null;
+              }
+            })
+          )
+        }
+        {
+          errorMessage ? (
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+          ) : selectedFilter == "2" && (
+            tasks.map((task) => {
+              if (task.task.state_task == "2") {
+                return (
+                  <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.done_card} key={task.task.id_task}>
+                    <Text style={styles.cardTitle}>Due: {formatDate(task.task.deadline_task)}</Text>
+                    <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                  </TouchableOpacity>
+                );
+              } else {
+                return null;
+              }
+            })
+          )
+        }
+        {
+          errorMessage ? (
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+          ) : selectedFilter == "3" && (
+            tasks.map((task) => {
+              const deadlineMoment = moment(task.task.deadline_task);
+              if(deadlineMoment  < new Date() && task.task.state_task != "2"){
+                return (  
+                  <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.late_card} key={task.task.id_task}>
+                    <Text style={styles.cardTitle}>Due: {formatDate(task.task.deadline_task)}</Text>
+                    <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                  </TouchableOpacity>
+                );
+              }})
+          )
+        }
       </ScrollView>
       <TouchableOpacity onPress={() => setShowMenu(!showMenu)} style={styles.menuBtn}>
         <Ionicons name="ellipsis-vertical-outline" size={24} color="white" />
@@ -247,10 +337,10 @@ export default function Group({ navigation }) {
             <Ionicons name="add-outline" size={24} color="black" />
             <Text style={styles.menuItemText}>Create Tasks</Text>
           </TouchableOpacity>
-          {/* <TouchableOpacity  onPress={() => handleFilesPress()} style={[styles.menuItem, styles.top]}>
+          <TouchableOpacity  onPress={() => handleFilesPress()} style={[styles.menuItem, styles.top]}>
             <Ionicons name="folder-outline" size={24} color="black" />
             <Text style={styles.menuItemText}>Group Files</Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
           <TouchableOpacity  onPress={() => handleUsersPress()} style={[styles.menuItem, styles.top]}>
             <Ionicons name="md-people-outline" size={24} color="black" />
             <Text style={styles.menuItemText}>Add User</Text>
