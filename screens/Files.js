@@ -160,7 +160,7 @@ const Files = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{route.params.group.name_group}</Text>
+        <Text style={styles.title}>{route.params.group.name_group}'s Files</Text>
         <View style={{flexDirection: 'row'}}>
           <TouchableOpacity onPress={getFiles} style={[styles.refreshBtn, {marginLeft: 10}]}>
             <Ionicons name="refresh-outline" size={24} color="white" />
@@ -188,8 +188,8 @@ const Files = ({ navigation }) => {
             )
           }
       </ScrollView>  
-      <TouchableOpacity style={styles.buttonStyles} onPress={handleFilePick}><Text style={styles.buttonText}>Select file</Text></TouchableOpacity>
-        {fileUri && <Text>Selected file: {saveFileName}</Text>}
+      <TouchableOpacity style={styles.buttonStyles} onPress={handleFilePick}><Text style={styles.buttonText}>SELECT FILE</Text></TouchableOpacity>
+        {fileUri && <Text style= {styles.text_file}>Selected file: {saveFileName}</Text>}
         <TouchableOpacity style={styles.buttonStyles} onPress={handleUpload} disabled={!fileUri} ><Text style={styles.buttonText}>UPLOAD</Text></TouchableOpacity>
     </View>
   );
@@ -273,6 +273,9 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
+    alignSelf: 'center'
+  },
+  text_file: {
     alignSelf: 'center'
   }
 });

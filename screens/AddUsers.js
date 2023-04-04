@@ -68,7 +68,7 @@ export default function AddUsers({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Users</Text>
+        <Text style={styles.title}>Add User to Group</Text>
         <View style={{flexDirection: 'row'}}>
           <TouchableOpacity onPress={getUsers} style={[styles.refreshBtn, {marginLeft: 10}]}>
             <Ionicons name="refresh-outline" size={24} color="white" />

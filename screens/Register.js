@@ -68,14 +68,9 @@ export default class Register extends React.Component{
         }).then((res) => {
           if(res.status == 201){
             this.props.navigation.navigate("Login");
-          }else if(res.status == 400){
-            alert(res.message);
-          }else{
-            alert("There was an error connecting to the server. Try again later.");
-          }      
+          }
         }).catch((err) => {
-          console.log(err);
-          alert("There was an error connecting to the server. Try again later.");
+          alert("There was an error. User may already be in use");
         });
       }
     }else{
