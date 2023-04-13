@@ -156,8 +156,8 @@ export default function Groups({ navigation }) {
           groups.map((group) => (
             <TouchableOpacity style={styles.card} key={group.id_group} onPress={() => handleGroupPress(group)}>
               <Text style={styles.cardTitle} numberOfLines={1}>{group.name_group}</Text>
-              <Text style={styles.cardDesc}>
-                {group.desc_group.length > 120 ? `${group.desc_group.substring(0, 120)}...` : group.desc_group}
+              <Text style={styles.cardDesc} numberOfLines={3}>
+                {group.desc_group}
               </Text>
             </TouchableOpacity>
           ))
