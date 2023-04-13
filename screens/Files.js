@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Button, Alert, Text, StyleSheet, Linking, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { View, Alert, Text, StyleSheet, Linking, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import axios from 'axios';
 import { useRoute } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Touchable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const instance = axios.create();
