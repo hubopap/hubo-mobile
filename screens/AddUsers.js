@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Alert, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useRoute } from '@react-navigation/native';
@@ -13,28 +13,44 @@ export default function AddUsers({ navigation }) {
   const [searchTerm, setSearchTerm] = useState('');
 
   //Função para adicionar outros utilizadores ao grupo
-  const AddUserToGroup = async (id_user) => {
-    console.log(id_user);
-    console.log(route.params.id_group);
-    try {
-      const token = await AsyncStorage.getItem('token');
-      const response = await axios.post('http://hubo.pt:3001/add_user_to_group', {
-        user_to_add: id_user,
-        group_id: route.params.id_group
-      },{
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (response.data.message) {
-        setErrorMessage('Create Tasks and start Working!');
-      }else{
-        if(errorMessage){
-          setErrorMessage(null);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-    navigation.goBack();
+  const AddUserToGroup = async (id_user, username) => {
+    const msg = 'Are you sure you want to add ' + username + '? This can\'t be undone'
+    Alert.alert(
+      'Add ' + username + '?',
+      msg,
+      [
+        {
+          text: 'No',
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem('token');
+              const response = await axios.post('http://hubo.pt:3001/add_user_to_group', {
+                user_to_add: id_user,
+                group_id: route.params.id_group
+              },{
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              if (response.data.message) {
+                setErrorMessage('Create Tasks and start Working!');
+              }else{
+                if(errorMessage){
+                  setErrorMessage(null);
+                }
+              }
+            } catch (error) {
+              console.log(error);
+            }
+            navigation.goBack();
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+    
   }
 
   //Função que vai buscar todos os utilizadores não pertencentes ao grupo
@@ -94,7 +110,7 @@ export default function AddUsers({ navigation }) {
                 <TouchableOpacity style={styles.card} key={user.username}>
                     <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                         <Text style={styles.cardTitle}>{user.username}</Text>
-                        <Ionicons onPress={() => {AddUserToGroup(user.id_user)}} name="add-circle-outline" size={24} color="#285e89" />
+                        <Ionicons onPress={() => {AddUserToGroup(user.id_user, user.username)}} name="add-circle-outline" size={24} color="#285e89" />
                     </View>
                 </TouchableOpacity>
               )

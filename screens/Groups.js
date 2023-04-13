@@ -81,6 +81,10 @@ export default function Groups({ navigation }) {
   const handleCreateGroup = async () => {
     if(!name_group || !desc_group){
       alert("Fill all the fields");
+    }else if (name_group.length > 25){
+      alert("Group name can't have more than 25 characters");
+    }else if (desc_group.length > 255){
+      alert("Group description can't have more than 255 characters");
     }else{
       try {
         const token = await AsyncStorage.getItem('token');
@@ -151,8 +155,10 @@ export default function Groups({ navigation }) {
         ) : (
           groups.map((group) => (
             <TouchableOpacity style={styles.card} key={group.id_group} onPress={() => handleGroupPress(group)}>
-              <Text style={styles.cardTitle}>{group.name_group}</Text>
-              <Text style={styles.cardDesc}>{group.desc_group}</Text>
+              <Text style={styles.cardTitle} numberOfLines={1}>{group.name_group}</Text>
+              <Text style={styles.cardDesc}>
+                {group.desc_group.length > 120 ? `${group.desc_group.substring(0, 120)}...` : group.desc_group}
+              </Text>
             </TouchableOpacity>
           ))
         )}

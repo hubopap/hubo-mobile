@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Alert, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
@@ -84,24 +84,59 @@ export default function Task({ navigation }) {
 
   //Funcão para alterar os dados da tarefa
   const updateTaskState = async (state_task) => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      const response = await axios.post('http://hubo.pt:3001/update_task_state', 
-        {
-          id_task: route.params.id_task,
-          state_task: state_task
-        }, 
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+    if(state_task == 4) {
+      const msg = 'Are you sure you want to delete this task? This can\'t be undone'
+      Alert.alert(
+        'Delete Task',
+        msg,
+        [
+          {
+            text: 'No',
+            style: 'cancel',
+          },
+          {
+            text: 'Yes',
+            onPress: async () => {
+              try {
+                const token = await AsyncStorage.getItem('token');
+                const response = await axios.post('http://hubo.pt:3001/update_task_state', 
+                  {
+                    id_task: route.params.id_task,
+                    state_task: state_task
+                  }, 
+                  {
+                    headers: { Authorization: `Bearer ${token}` },
+                  }
+                );
+                navigation.replace("Group", {grupo: route.params.group});
+              }catch (error){
+                console.log(error);
+              }
+            },
+          },
+        ],
+        { cancelable: false }
       );
-      if(state_task != 4){
-        getTask();
-      }else{
-        navigation.replace("Group", {grupo: route.params.group});
+    }else{
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axios.post('http://hubo.pt:3001/update_task_state', 
+          {
+            id_task: route.params.id_task,
+            state_task: state_task
+          }, 
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        if(state_task != 4){
+          getTask();
+        }else{
+          navigation.replace("Group", {grupo: route.params.group});
+        }
+      }catch (error){
+        console.log(error);
       }
-    }catch (error){
-      console.log(error);
     }
   };
 
@@ -172,7 +207,7 @@ export default function Task({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{route.params.id_task}</Text>
+        <Text style={styles.title}>Task</Text>
           <View style={{flexDirection: 'row'}}>
             {
               perm == "3" ? (

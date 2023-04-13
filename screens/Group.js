@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Alert, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
@@ -132,6 +132,15 @@ export default function Group({ navigation }) {
     }
   }
 
+  const groupInfo = async () => {
+    const usernames = groupUsers.map(user => user.username);
+    var msg;
+    msg=usernames;
+    Alert.alert(
+      "Group info",
+      "Group Name: " + route.params.grupo.name_group + "\n\n" + "Group Description: " +  route.params.grupo.desc_group + "\n\n" + "Group Users:\n\n" + groupUsers.map(user => user.username).join(",\n")
+    )
+  }
 
   //Funcão responsável por fechar o formulário de criação de Tarefa
   const cancel = async () => {
@@ -164,6 +173,11 @@ export default function Group({ navigation }) {
     const deadline = deadlineMoment.toDate();
     if (deadline < new Date()) {
       alert('Select a future date');
+      return;
+    }
+
+    if (descTask.length > 120) {
+      alert('Task Description has a maximum of 120 characters');
       return;
     }
   
@@ -230,8 +244,11 @@ export default function Group({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{route.params.grupo.name_group}</Text>
+        <Text style={styles.title}>{route.params.grupo.name_group.length > 15 ? `${route.params.grupo.name_group.substring(0, 12)}...` : route.params.grupo.name_group}</Text>
         <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity onPress={groupInfo} style={styles.profileBtn}>
+            <Ionicons name="information-outline" size={24} color="white" />
+          </TouchableOpacity>
           <TouchableOpacity onPress={getTasks} style={[styles.refreshBtn, {marginLeft: 10}]}>
             <Ionicons name="refresh-outline" size={24} color="white" />
           </TouchableOpacity>
@@ -260,21 +277,21 @@ export default function Group({ navigation }) {
                 return (  
                   <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.late_card} key={task.task.id_task}>
                     <Text style={styles.cardTitle}>Due: {formatDate(task.task.deadline_task)}</Text>
-                    <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                    <Text style={styles.cardDesc} numberOfLines= {3} >{task.task.desc_task}</Text>
                   </TouchableOpacity>
                 );
               }else if (task.task.state_task == "1") {
                 return (
                   <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.card} key={task.task.id_task}>
                     <Text style={styles.cardTitle}>Due: {formatDate(task.task.deadline_task)}</Text>
-                    <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                    <Text style={styles.cardDesc} numberOfLines= {3}>{task.task.desc_task}</Text>
                   </TouchableOpacity>
                 );
               } else if (task.task.state_task == "2") {
                 return (
                   <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.done_card} key={task.task.id_task}>
                     <Text style={styles.cardTitle}>Due: {formatDate(task.task.deadline_task)}</Text>
-                    <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                    <Text style={styles.cardDesc} numberOfLines= {3}>{task.task.desc_task}</Text>
                   </TouchableOpacity>
                 );
               } else {
@@ -293,14 +310,14 @@ export default function Group({ navigation }) {
                 return (  
                   <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.late_card} key={task.task.id_task}>
                     <Text style={styles.cardTitle}>Due: {formatDate(task.task.deadline_task)}</Text>
-                    <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                    <Text style={styles.cardDesc} numberOfLines= {3}>{task.task.desc_task}</Text>
                   </TouchableOpacity>
                 );
               }else if (task.task.state_task == "1") {
                 return (
                   <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.card} key={task.task.id_task}>
                     <Text style={styles.cardTitle}>Due: {formatDate(task.task.deadline_task)}</Text>
-                    <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                    <Text style={styles.cardDesc} numberOfLines= {3}>{task.task.desc_task}</Text>
                   </TouchableOpacity>
                 );
               } else {
@@ -318,7 +335,7 @@ export default function Group({ navigation }) {
                 return (
                   <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.done_card} key={task.task.id_task}>
                     <Text style={styles.cardTitle}>Due: {formatDate(task.task.deadline_task)}</Text>
-                    <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                    <Text style={styles.cardDesc} numberOfLines= {3}>{task.task.desc_task}</Text>
                   </TouchableOpacity>
                 );
               } else {
@@ -337,7 +354,7 @@ export default function Group({ navigation }) {
                 return (  
                   <TouchableOpacity onPress={() =>{goToTask(task.task.id_task, task.permission)}} style={styles.late_card} key={task.task.id_task}>
                     <Text style={styles.cardTitle}>Due: {formatDate(task.task.deadline_task)}</Text>
-                    <Text style={styles.cardDesc}>{task.task.desc_task}</Text>
+                    <Text style={styles.cardDesc} numberOfLines= {3}>{task.task.desc_task}</Text>
                   </TouchableOpacity>
                 );
               }})
@@ -462,7 +479,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     padding: 3,
     paddingBottom: 4,
-    marginRight: 6,
+    marginRight: 10,
     borderRadius: 5,
     backgroundColor: '#204b6e',
   },
@@ -476,23 +493,44 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   done_card: {
-    backgroundColor: 'green',
+    backgroundColor: 'white',
     width: '80%',
     borderRadius: 10,
     padding: 15,
     marginTop: 15,
     height: 130,
     marginBottom: 15,
+    borderColor: 'green',
+    borderWidth: 4,
+    shadowColor: '#7FFF00',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 10,
+    elevation: 10,
   },
   late_card: {
-    backgroundColor: 'red',
+    backgroundColor: 'white',
     width: '80%',
     borderRadius: 10,
     padding: 15,
     marginTop: 15,
     height: 130,
     marginBottom: 15,
+    borderColor: 'red',
+    borderWidth: 4,
+    shadowColor: '#FF4500',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 10,
+    elevation: 10,
   },
+  
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',

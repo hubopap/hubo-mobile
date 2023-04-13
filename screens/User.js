@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, Keyboard, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
 import axios from 'axios';
@@ -11,7 +11,7 @@ export default function User({navigation}){
   const [originalbio, setOriginalBio] = useState('');
   const [bio, setBio] = useState('');
   const [editable, setEditable] = useState(false);
-  
+
   //Funcão responsável por eliminar o token
   const handleLogout = async () => {
     await AsyncStorage.removeItem('token');
@@ -175,6 +175,7 @@ return(
             <Text style={styles.labelText}>Bio</Text>
           </View>
           <TextInput 
+            onBlur={() => Keyboard.dismiss()}
             style={[styles.textbox, styles.bigTextbox]} 
             onChangeText = {
               (value) => {
