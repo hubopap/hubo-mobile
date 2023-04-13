@@ -160,7 +160,7 @@ const Files = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{route.params.group.name_group}'s Files</Text>
+        <Text style={styles.title}>Files</Text>
         <View style={{flexDirection: 'row'}}>
           <TouchableOpacity onPress={getFiles} style={[styles.refreshBtn, {marginLeft: 10}]}>
             <Ionicons name="refresh-outline" size={24} color="white" />
