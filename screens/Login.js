@@ -42,7 +42,7 @@ export default class Login extends React.Component{
         }
       }
     }).catch((error) => {
-      alert("Something went wrong! Check your credentials")
+      alert("Something went wrong! Check your credentials!")
     });
   }
 

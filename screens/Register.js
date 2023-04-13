@@ -18,18 +18,17 @@ export default class Register extends React.Component{
     if(re.test(email)){
       return true;
     }else{
-      alert("You must insert a valid email");
+      alert("You must insert a valid email!");
       return false;
     }
   }
 
   //função que valida a password
   validatePassword(password) {
-    const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/;
-    if(re.test(password) && password.length >= 8){
+    if(password.length >= 8 && password.length < 20){
       return true;
     }else{
-      alert("Password must have 8 characters, lower and upercase letters, numbers and special characters");
+      alert("Password must have between 8 and 20 characters!");
       return false;
     }
   }
@@ -48,7 +47,7 @@ export default class Register extends React.Component{
   //função que regista o utilizador
   registerUser() {
     const { username, password, email } = this.state;
-    if(username.length >= 8){
+    if(username.length >= 3 && username.length < 21){
       if (
         this.validateEmail(email) && 
         this.validatePassword(password) && 
@@ -74,7 +73,7 @@ export default class Register extends React.Component{
         });
       }
     }else{
-      alert("Username must have at least 8 characters");
+      alert("Username must have between 3 and 20 characters!");
     }
   }
   
