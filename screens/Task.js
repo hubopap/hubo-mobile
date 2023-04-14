@@ -19,6 +19,7 @@ export default function Task({ navigation }) {
   const [deadline_task, setDeadline_Task] = useState('');
   const [originaldescTask, setOriginalDescTask] = useState('');
   const [originaldeadline_task, setOriginalDeadline_Task] = useState('');
+  const [originalDateTask, setOriginalDateTask] = useState('');
   const [deadlineTask, setDeadlineTask] = useState('');
   const [date, setDate] = useState('');
 
@@ -142,15 +143,31 @@ export default function Task({ navigation }) {
 
   //Funcão que muda os dados da tarefa
   const updateTaskInfo = async (Deadline_Task, Desc_Task) => {
-    const deadlineMoment = moment(deadlineTask);
+    var Deadline_Date_task;
+    if(!Deadline_Task){
+      Deadline_Date_task = originalDateTask;
+    }else{
+      Deadline_Date_task = Deadline_Task;
+    }
+
+    const deadlineMoment = moment(Deadline_Date_task);
     if (!deadlineMoment.isValid()) {
       alert('Select a valid date');
       return;
     }
-  
-    const deadline = deadlineMoment.toDate();
-    if (deadline < new Date()) {
+    
+    const originalDate_comparison = moment(originalDateTask);
+    deadline_comparison = moment(Deadline_Date_task);
+    const deadline = deadlineMoment;
+
+
+    if (deadline.toDate() < new Date() && deadline_comparison.format("YYYY-MM-DDT23:59:59.999[Z]") != originalDate_comparison.format("YYYY-MM-DDT23:59:59.999[Z]")) {
       alert('Select a future date');
+      return;
+    }
+
+    if(Desc_Task.length > 120){
+      alert('Task description must have less than 120 characters');
       return;
     }
   
@@ -159,7 +176,7 @@ export default function Task({ navigation }) {
       const response = await axios.post('http://hubo.pt:3001/update_task_info', 
         {
           id_task: route.params.id_task,
-          deadline_task: Deadline_Task,
+          deadline_task: Deadline_Date_task,
           desc_task: Desc_Task
         }, 
         {
@@ -193,6 +210,7 @@ export default function Task({ navigation }) {
       setDeadline_Task(day + "/" + month + "/" + year);
       setOriginalDeadline_Task(day + "/" + month + "/" + year);
       setDate(day + "/" + month + "/" + year);
+      setOriginalDateTask(response.data.deadline_task);
     }catch (error){
       console.log(error);
     }
@@ -222,21 +240,28 @@ export default function Task({ navigation }) {
         </View>
         {taskData && (
           <View style={styles.taskcontainer}>
-            <TextInput 
-              value = {descTask} 
-              editable = {editable} 
-              placeholder="Task Description" 
-              onChangeText={val => setDescTask(val)}style={styles.input} 
-            />
-            <TextInput
-              style={styles.input}
-              value={date}
-              editable = {editable}
-              onChangeText={handleChange}
-              placeholder="Due date (dd/mm/yyyy)"
-              maxLength={10}
-              keyboardType="numeric"
-            />
+              <View style={styles.labelContainer}>
+                <Text style={styles.labelText}>Task Description</Text>
+              </View>
+              <TextInput 
+                value = {descTask} 
+                editable = {editable} 
+                placeholder="Task Description"
+                multiline = {true}
+                onChangeText={val => setDescTask(val)}style={styles.biginput} 
+              />
+              <View style={styles.labelContainer}>
+                <Text style={styles.labelText}>Due Date</Text>
+              </View>
+              <TextInput
+                style={styles.input}
+                value={date}
+                editable = {editable}
+                onChangeText={handleChange}
+                placeholder="Due date (dd/mm/yyyy)"
+                maxLength={10}
+                keyboardType="numeric"
+              />
             {
               stateTask == "2" ? (
                 <></>
@@ -302,6 +327,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
+  textboxContainer: {
+    width: '80%',
+    marginTop: 8,
+    height: 50,
+    marginBottom: 20,
+  },
+  labelContainer: {
+    marginBottom: 3,
+  },
+  labelText: {
+    fontWeight: 'bold',
+  },
   title: {
     color: 'white',
     marginTop: 10,
@@ -325,6 +362,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
   },
   input: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+  },
+  biginput: {
+    height:160,
+    textAlignVertical: 'top',
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 5,
