@@ -60,8 +60,12 @@ const Files = ({ navigation }) => {
   const handleFilePick = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync();
-      await setFileName(result.name)
-      await setFileUri(result.uri);
+      if(result.size < 1024*1024*25){
+        await setFileName(result.name)
+        await setFileUri(result.uri);
+      }else{
+        alert("Files must have less than 25 MegaBytes.");
+      }
     } catch (error) {
       console.error(error);
     }
