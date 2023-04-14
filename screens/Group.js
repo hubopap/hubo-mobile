@@ -218,9 +218,12 @@ export default function Group({ navigation }) {
 
   //Funcão realizada antes de renderizar por parte do React
   useEffect(() => {
-    getTasks();
     getGroupUsers();
   }, [groupUsers]);
+
+  useEffect(() => {
+    getTasks();
+  }, []);
 
   //Funcão responsável por chamar a página de Ficheiros do grupo
   const handleFilesPress = () => {
