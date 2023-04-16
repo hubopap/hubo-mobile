@@ -47,9 +47,6 @@ export default function Users({ navigation }) {
           <TouchableOpacity onPress={getUsers} style={[styles.refreshBtn, {marginLeft: 10}]}>
             <Ionicons name="refresh-outline" size={24} color="white" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.profileBtn}>
-            <Ionicons name="md-person" size={24} color="white" />
-          </TouchableOpacity>
         </View>
       </View>
       <TextInput
