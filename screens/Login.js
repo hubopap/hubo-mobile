@@ -26,7 +26,7 @@ export default class Login extends React.Component{
 
   //função que dá login
   loginUser() {
-    axios.post("http://hubo.pt:3001/login", {
+    axios.post("https://hubo.pt:3001/login", {
       method: "post",
       username: this.state.username,
       password: this.state.password

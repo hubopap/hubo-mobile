@@ -40,7 +40,7 @@ const Files = ({ navigation }) => {
   const isLoggedIn = async () => {
     const token = await handleGetToken();
     try {
-      const response = await axios.get('http://hubo.pt:3001/userdata', {
+      const response = await axios.get('https://hubo.pt:3001/userdata', {
         headers: {
           Authorization: `Bearer ${token}`
         },
@@ -73,7 +73,7 @@ const Files = ({ navigation }) => {
 
   //Função responsável por listar os ficheiros relativos ao grupo
   const getFiles = async () => {
-      const response = await instance.post('http://hubo.pt:3001/files_list', {
+      const response = await instance.post('https://hubo.pt:3001/files_list', {
         id_group: route.params.group.id_group
       });
       if(response.data.files){
@@ -92,7 +92,7 @@ const Files = ({ navigation }) => {
         type: 'multipart/form-data',
       });
       const response = await instance.post(
-        `http://hubo.pt:3001/upload_file?id_group=${route.params.group.id_group}`,
+        `https://hubo.pt:3001/upload_file?id_group=${route.params.group.id_group}`,
         formData,
         {
           headers: {
@@ -111,11 +111,11 @@ const Files = ({ navigation }) => {
 
   //Função que abre o link de download de um ficheiro
   const handleDownload = async (file) => {
-    await Linking.canOpenURL(`http://hubo.pt:3001/download_file?id_group=${active_group}&file_name=${file}`).then(supported => {
+    await Linking.canOpenURL(`https://hubo.pt:3001/download_file?id_group=${active_group}&file_name=${file}`).then(supported => {
         if (supported) {
-            Linking.openURL(`http://hubo.pt:3001/download_file?id_group=${active_group}&file_name=${file}`);
+            Linking.openURL(`https://hubo.pt:3001/download_file?id_group=${active_group}&file_name=${file}`);
         } else {
-            console.log("Don't know how to open URI: " + `http://hubo.pt:3001/download_file?id_group=${active_group}&file_name=${file}`);
+            console.log("Don't know how to open URI: " + `https://hubo.pt:3001/download_file?id_group=${active_group}&file_name=${file}`);
         }
     });
   } 
@@ -135,7 +135,7 @@ const Files = ({ navigation }) => {
           onPress: async () => {
             try {
               const response = await instance.post(
-                'http://hubo.pt:3001/delete_file',
+                'https://hubo.pt:3001/delete_file',
                 {
                   id_group: route.params.group.id_group,
                   file_name: file

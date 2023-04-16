@@ -31,7 +31,7 @@ export default function User({navigation}){
   const isLoggedIn = async () => {
     const token = await handleGetToken();
     try {
-      const response = await axios.get('http://hubo.pt:3001/userdata', {
+      const response = await axios.get('https://hubo.pt:3001/userdata', {
         headers: {
           Authorization: `Bearer ${token}`
         },
@@ -69,7 +69,7 @@ export default function User({navigation}){
   const getUserDetails = async (user_query) => {
     try {
       const token = await AsyncStorage.getItem('token');
-      const response = await axios.post('http://hubo.pt:3001/user_details', {
+      const response = await axios.post('https://hubo.pt:3001/user_details', {
         user_query: user_query,
       }, {
         headers: { 
@@ -89,7 +89,7 @@ export default function User({navigation}){
   const handleUpdateBio = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      await axios.post('http://hubo.pt:3001/update_bio', {
+      await axios.post('https://hubo.pt:3001/update_bio', {
         bio_user: bio,
       }, {
         headers: { 

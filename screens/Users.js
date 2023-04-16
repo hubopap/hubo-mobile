@@ -20,7 +20,7 @@ export default function Users({ navigation }) {
   const getUsers = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      const response = await axios.get('http://hubo.pt:3001/users', {
+      const response = await axios.get('https://hubo.pt:3001/users', {
         headers: {Authorization: `Bearer ${token}`},
       });
       if(errorMessage){

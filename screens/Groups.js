@@ -35,7 +35,7 @@ export default function Groups({ navigation }) {
   const getGroups = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      const response = await axios.get('http://hubo.pt:3001/groups_by_user', {
+      const response = await axios.get('https://hubo.pt:3001/groups_by_user', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.data.message) {
@@ -60,7 +60,7 @@ export default function Groups({ navigation }) {
   const isLoggedIn = async () => {
     const token = await handleGetToken();
     try {
-      const response = await axios.get('http://hubo.pt:3001/userdata', {
+      const response = await axios.get('https://hubo.pt:3001/userdata', {
         headers: {
           Authorization: `Bearer ${token}`
         },
@@ -88,7 +88,7 @@ export default function Groups({ navigation }) {
     }else{
       try {
         const token = await AsyncStorage.getItem('token');
-        await axios.post('http://hubo.pt:3001/create_group', {
+        await axios.post('https://hubo.pt:3001/create_group', {
           name_group: name_group,
           desc_group: desc_group
         }, 

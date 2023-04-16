@@ -69,7 +69,7 @@ export default function Group({ navigation }) {
   const getGroupUsers = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      const response = await axios.post('http://hubo.pt:3001/group_users', {id_group: route.params.grupo.id_group}, {
+      const response = await axios.post('https://hubo.pt:3001/group_users', {id_group: route.params.grupo.id_group}, {
         
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -90,7 +90,7 @@ export default function Group({ navigation }) {
   const getTasks = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      const response = await axios.post('http://hubo.pt:3001/tasks_by_group', {id_group: route.params.grupo.id_group}, {
+      const response = await axios.post('https://hubo.pt:3001/tasks_by_group', {id_group: route.params.grupo.id_group}, {
         
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -116,7 +116,7 @@ export default function Group({ navigation }) {
   const isLoggedIn = async () => {
     const token = await handleGetToken();
     try {
-      const response = await axios.get('http://hubo.pt:3001/userdata', {
+      const response = await axios.get('https://hubo.pt:3001/userdata', {
         headers: {
           Authorization: `Bearer ${token}`
         },
@@ -185,7 +185,7 @@ export default function Group({ navigation }) {
       try {
         const token = await AsyncStorage.getItem('token');
         await axios.post(
-          'http://hubo.pt:3001/create_task',
+          'https://hubo.pt:3001/create_task',
           {
             assigned_user: assignedUser,
             assigned_user_perm: selectedUserPerm,

@@ -28,7 +28,7 @@ export default function AddUsers({ navigation }) {
           onPress: async () => {
             try {
               const token = await AsyncStorage.getItem('token');
-              const response = await axios.post('http://hubo.pt:3001/add_user_to_group', {
+              const response = await axios.post('https://hubo.pt:3001/add_user_to_group', {
                 user_to_add: id_user,
                 group_id: route.params.id_group
               },{
@@ -57,7 +57,7 @@ export default function AddUsers({ navigation }) {
   const getUsers = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      const response = await axios.post('http://hubo.pt:3001/non_group_users', {id_group: route.params.id_group}, {
+      const response = await axios.post('https://hubo.pt:3001/non_group_users', {id_group: route.params.id_group}, {
         
         headers: { Authorization: `Bearer ${token}` },
       });

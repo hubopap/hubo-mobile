@@ -59,7 +59,7 @@ export default class Register extends React.Component{
         !password.includes('\uD83D\uDE00') && 
         username.length >= 8
       ) {
-        axios.post("http://hubo.pt:3001/register", {
+        axios.post("https://hubo.pt:3001/register", {
           method: "post",
           username: username,
           password: password,

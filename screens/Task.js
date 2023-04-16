@@ -52,7 +52,7 @@ export default function Task({ navigation }) {
   const isLoggedIn = async () => {
     const token = await handleGetToken();
     try {
-      const response = await axios.get('http://hubo.pt:3001/userdata', {
+      const response = await axios.get('https://hubo.pt:3001/userdata', {
         headers: {
           Authorization: `Bearer ${token}`
         },
@@ -100,7 +100,7 @@ export default function Task({ navigation }) {
             onPress: async () => {
               try {
                 const token = await AsyncStorage.getItem('token');
-                const response = await axios.post('http://hubo.pt:3001/update_task_state', 
+                const response = await axios.post('https://hubo.pt:3001/update_task_state', 
                   {
                     id_task: route.params.id_task,
                     state_task: state_task
@@ -121,7 +121,7 @@ export default function Task({ navigation }) {
     }else{
       try {
         const token = await AsyncStorage.getItem('token');
-        const response = await axios.post('http://hubo.pt:3001/update_task_state', 
+        const response = await axios.post('https://hubo.pt:3001/update_task_state', 
           {
             id_task: route.params.id_task,
             state_task: state_task
@@ -173,7 +173,7 @@ export default function Task({ navigation }) {
   
     try {
       const token = await AsyncStorage.getItem('token');
-      const response = await axios.post('http://hubo.pt:3001/update_task_info', 
+      const response = await axios.post('https://hubo.pt:3001/update_task_info', 
         {
           id_task: route.params.id_task,
           deadline_task: Deadline_Date_task,
@@ -193,7 +193,7 @@ export default function Task({ navigation }) {
   const getTask = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      const response = await axios.post('http://hubo.pt:3001/task_info', {id_task: route.params.id_task}, {
+      const response = await axios.post('https://hubo.pt:3001/task_info', {id_task: route.params.id_task}, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setStateTask(response.data.state_task);

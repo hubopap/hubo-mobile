@@ -23,7 +23,7 @@ export default function HomePage() {
   const isLoggedIn = async () => {
     const token = await handleGetToken();   
     console.log(token);
-    return axios.get('http://hubo.pt:3001/userdata', {
+    return axios.get('https://hubo.pt:3001/userdata', {
       headers: {
         Authorization: `Bearer ${token}`
       },
