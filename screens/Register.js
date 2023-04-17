@@ -119,7 +119,7 @@ export default class Register extends React.Component{
           <Text style={styles.register}>Register</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.question} onPress={() => {this.props.navigation.replace("Login")}}>
-          <Text>Já tem conta?</Text>
+          <Text>Already have an account?</Text>
         </TouchableOpacity>
       </View>
     )

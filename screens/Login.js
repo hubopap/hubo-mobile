@@ -82,7 +82,7 @@ export default class Login extends React.Component{
             <Text style={styles.login}>Login</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.question} onPress={() =>  {this.props.navigation.replace("Register")}}>
-            <Text>Ainda não tem conta?</Text>
+            <Text>Don't have an account?</Text>
         </TouchableOpacity>
       </View>
     )
