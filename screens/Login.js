@@ -41,7 +41,9 @@ export default class Login extends React.Component{
             //Avançar para a página Groups.
             this.props.navigation.replace("Groups");
           }).catch((error) => {
-            console.error(error);
+            if (error.response.status == 401){
+              alert("Invalid Credentials!");
+            }
           });
         }
       }

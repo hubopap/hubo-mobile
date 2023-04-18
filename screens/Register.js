@@ -69,7 +69,11 @@ export default class Register extends React.Component{
             this.props.navigation.navigate("Login");
           }
         }).catch((err) => {
-          alert("There was an error. User may already be in use");
+          if(err.response.status == 400){
+            alert("Username already exists!");
+          }else{
+            alert("There was an error. User may already be in use");
+          }
         });
       }
     }else{
