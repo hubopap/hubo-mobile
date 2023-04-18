@@ -49,7 +49,7 @@ export default class Login extends React.Component{
       }
       //Em caso de erro, alertar que algo correu mal, provavelmente por credenciais erradas.
     }).catch((error) => {
-      alert("Something went wrong! Check your credentials!")
+      alert("Something went wrong! Try again later.")
     });
   }
 
