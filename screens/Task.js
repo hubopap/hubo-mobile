@@ -85,6 +85,7 @@ export default function Task({ navigation }) {
 
   //Funcão para alterar os dados da tarefa
   const updateTaskState = async (state_task) => {
+    //Caso o user pretenda alterar o estado para 4 (Eliminar a tarefa, prompt de uma confirmação)
     if(state_task == 4) {
       const msg = 'Are you sure you want to delete this task? This can\'t be undone'
       Alert.alert(
@@ -98,6 +99,7 @@ export default function Task({ navigation }) {
           {
             text: 'Yes',
             onPress: async () => {
+              //Caso o utilizador confirme, request efetuado para que o utilizador elimine a tarefa, voltando depois à página de grupo
               try {
                 const token = await AsyncStorage.getItem('token');
                 const response = await axios.post('https://hubo.pt:3001/update_task_state', 
@@ -119,6 +121,7 @@ export default function Task({ navigation }) {
         { cancelable: false }
       );
     }else{
+      //Caso o estado para aplicar não seja 4, este só poderá ser 2 (alterar o estado para "tarefa concluída")
       try {
         const token = await AsyncStorage.getItem('token');
         const response = await axios.post('https://hubo.pt:3001/update_task_state', 
@@ -145,11 +148,11 @@ export default function Task({ navigation }) {
   const updateTaskInfo = async (Deadline_Task, Desc_Task) => {
     var Deadline_Date_task;
     if(!Deadline_Task){
-      Deadline_Date_task = originalDateTask;
+      Deadline_Date_task = originalDateTask;pa
     }else{
       Deadline_Date_task = Deadline_Task;
     }
-
+    //Verificação da validade da data
     const deadlineMoment = moment(Deadline_Date_task);
     if (!deadlineMoment.isValid()) {
       alert('Select a valid date');
@@ -159,18 +162,17 @@ export default function Task({ navigation }) {
     const originalDate_comparison = moment(originalDateTask);
     deadline_comparison = moment(Deadline_Date_task);
     const deadline = deadlineMoment;
-
-
+    //Verificação se a data é passada, mas vendo se não é a data que já estava, em caso de editar uma tarefa atrasada
     if (deadline.toDate() < new Date() && deadline_comparison.format("YYYY-MM-DDT23:59:59.999[Z]") != originalDate_comparison.format("YYYY-MM-DDT23:59:59.999[Z]")) {
       alert('Select a future date');
       return;
     }
-
+    //Verficação do tamanho da descrição, não podendo passar dos 120 caracteres
     if(Desc_Task.length > 120){
       alert('Task description must have less than 120 characters');
       return;
     }
-  
+    //Realização do Pedido à API, voltando para a página de grupo
     try {
       const token = await AsyncStorage.getItem('token');
       const response = await axios.post('https://hubo.pt:3001/update_task_info', 

@@ -24,23 +24,28 @@ export default class Login extends React.Component{
     this.setState({ [key]: val })
   }
 
-  //função que dá login
+  //função que dá login.
   loginUser() {
+    //Pedido à API localizada no endereço abaixo, que inclui username e password.
     axios.post("https://hubo.pt:3001/login", {
       method: "post",
       username: this.state.username,
       password: this.state.password
     }).then((res) => {
+      //Caso haja uma resposta.
       if(res){
         if(res.data.message == "Login feito com sucesso"){
+          //Colocar o token de autenticação no armazenamento do utilizador.
           AsyncStorage.setItem("token", res.data.token)
           .then(() => {
+            //Avançar para a página Groups.
             this.props.navigation.replace("Groups");
           }).catch((error) => {
             console.error(error);
           });
         }
       }
+      //Em caso de erro, alertar que algo correu mal, provavelmente por credenciais erradas.
     }).catch((error) => {
       alert("Something went wrong! Check your credentials!")
     });

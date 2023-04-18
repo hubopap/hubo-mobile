@@ -165,22 +165,23 @@ export default function Group({ navigation }) {
   //Funcão responsável por fazer as verificações e criar a tarefa
   const handleCreateTask = async () => {
     const deadlineMoment = moment(deadlineTask);
+    //Verificação da validade da data
     if (!deadlineMoment.isValid()) {
       alert('Select a valid date');
       return;
     }
-  
+    //Verificação de se a data é futura
     const deadline = deadlineMoment.toDate();
     if (deadline < new Date()) {
       alert('Select a future date');
       return;
     }
-
+    //Limite da descrição da tarefa a 120 carcateres
     if (descTask.length > 120) {
       alert('Task Description has a maximum of 120 characters');
       return;
     }
-  
+    //Verificação se todos os parâmetros são válidos, envio das informações para a API no axios Post e reset das textboxes.
     if(assignedUser && selectedUserPerm && route.params.grupo.id_group && descTask && deadline){
       try {
         const token = await AsyncStorage.getItem('token');
@@ -211,9 +212,9 @@ export default function Group({ navigation }) {
         console.log(error);
       }
     }else{
+      //Alerta em caso de formulário incompleto
       alert("You must fill all the fields!");
     }
-
   };
 
   //Funcão realizada antes de renderizar por parte do React
