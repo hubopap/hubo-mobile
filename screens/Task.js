@@ -113,7 +113,7 @@ export default function Task({ navigation }) {
                 );
                 navigation.replace("Group", {grupo: route.params.group});
               }catch (error){
-                console.log(error);
+                alert("There was an error! Try again later.")
               }
             },
           },
@@ -139,16 +139,43 @@ export default function Task({ navigation }) {
           navigation.replace("Group", {grupo: route.params.group});
         }
       }catch (error){
-        console.log(error);
+        alert("There was an error! Try again later.")
       }
     }
   };
+
+  const getTaskInfo = async () => {
+    const token = await AsyncStorage.getItem('token');
+    const id_task_search_users = route.params.id_task;
+    const response = await axios.post('https://hubo.pt:3001/task_owners', 
+      {
+        id_task: id_task_search_users
+      }, 
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    if(response.data.users_p2){
+      Alert.alert(
+        "Task Users",
+        "User who can only complete:" + "\n" + response.data.users_p2.map(user => user.username).join(",\n") + "\n" + 
+        "\n" + "Users with Full Permission:" + "\n" + response.data.users_p3.map(user => user.username).join(",\n") + "\n"
+      );
+    }else if(!response.data.users_p2 && response.data.users_p3){
+      Alert.alert(
+        "Task Users",
+        "Users with Full Permission:" + "\n" + "\n" + response.data.users_p3.map(user => user.username).join(",\n")
+      );
+    }else{
+      alert("There whas an Error retrieving the information!");
+    }
+  } 
 
   //Funcão que muda os dados da tarefa
   const updateTaskInfo = async (Deadline_Task, Desc_Task) => {
     var Deadline_Date_task;
     if(!Deadline_Task){
-      Deadline_Date_task = originalDateTask;pa
+      Deadline_Date_task = originalDateTask;
     }else{
       Deadline_Date_task = Deadline_Task;
     }
@@ -187,7 +214,7 @@ export default function Task({ navigation }) {
       );
       navigation.replace("Group", {grupo: route.params.group});
     }catch (error){
-      console.log(error);
+      alert("There was an error! Try again later.")
     }
   };
 
@@ -214,7 +241,7 @@ export default function Task({ navigation }) {
       setDate(day + "/" + month + "/" + year);
       setOriginalDateTask(response.data.deadline_task);
     }catch (error){
-      console.log(error);
+      alert("There was an error! Try again later.")
     }
   };
 
@@ -231,11 +258,19 @@ export default function Task({ navigation }) {
           <View style={{flexDirection: 'row'}}>
             {
               perm == "3" ? (
+              <>
                 <TouchableOpacity onPress={() => {updateTaskState(4)}} style={styles.deleteBtn}>
                   <Ionicons name="trash-outline" size={24} color="white" />
                 </TouchableOpacity>
+                <TouchableOpacity onPress={getTaskInfo} style={styles.profileBtn}>
+                  <Ionicons name="information-outline" size={24} color="white" />
+                </TouchableOpacity>
+                </> 
               ) : (
-                <></>
+                <>
+                <TouchableOpacity onPress={getTaskInfo} style={styles.profileBtn}>
+                  <Ionicons name="information-outline" size={24} color="white" />
+                </TouchableOpacity></>
               )
             }
           </View>
